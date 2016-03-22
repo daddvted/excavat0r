@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>{% block title %}{% end %}</title>
+
+        <link rel="shortcut icon" href="{{ static_url('image/favicon.ico') }}">
+        <link rel="stylesheet" type="text/css" href="{{ static_url('bootstrap-3.3.6/css/bootstrap.min.css') }}">
+        <script type="text/javascript" src="{{ static_url('js/jquery-1.11.3.min.js') }}"></script>
+        <script type="text/javascript" src="{{ static_url('bootstrap-3.3.6/js/bootstrap.min.js') }}"></script>
+        {% block js %}{% end %}
+    </head>
+<body style="margin:10px">
+
+<div class="">
+    {% block content %}{% end %}
+</div>
+
+    <div class="text-right" style="color:#888888">
+        <small>Log2Chart&mdash; v1.3</small>
+    </div>
+
+</body>
+</html>
+
