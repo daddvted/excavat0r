@@ -13,6 +13,7 @@ class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
             (r"/", IndexHandler),
+            (r"/ws", WSHandler),
         ]
 
         settings = dict(
@@ -22,6 +23,7 @@ class Application(tornado.web.Application):
                 xsrf_cookies=True,
                 cookie_secret="__WITH_GREATE_POWER_COMES_WITH_GREATE_RESPONSIBILITY__",
                 debug=True,
+                autoreload=True,
         )
 
         super(Application, self).__init__(handlers, **settings)

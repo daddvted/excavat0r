@@ -1,7 +1,34 @@
 {% extends "base.html" %}
-{% block title %}Menu{% end %}
+{% block title %}Q&A{% end %}
+{% block js%}
+<script type="text/javascript" src="{{ static_url('js/app.js') }}"></script>
+{% end %}
 {% block content %}
-    <div class="content">
-        hello
-    </div>
+<div class="row">
+    <!--
+    <form class="form-inline">
+        <div class="from-group col-md-12">
+            <input id="search_txt" type="text" size="100" class="form-control" placeholder="Search something" />
+            <button id="search_btn" type="button" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+    -->
+    <div class="col-lg-6">
+        <div class="input-group">
+            <input id="input_txt" type="text" class="form-control" placeholder="Type something">
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Menu<span class="caret"></span></button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a id="go_btn" href="#">Go</a></li>
+                    <li><a id="segment_btn" href="#">分词</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="#">Separated link</a></li>
+                </ul>
+            </div><!-- /btn-group -->
+        </div><!-- /input-group -->
+    </div><!-- /.col-lg-6 -->
+
+    <div id="result" class="col-md-12">Result</div>
+</div>
 {% end %}

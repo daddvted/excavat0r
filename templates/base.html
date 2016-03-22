@@ -10,15 +10,9 @@
         <script type="text/javascript" src="{{ static_url('bootstrap-3.3.6/js/bootstrap.min.js') }}"></script>
         {% block js %}{% end %}
     </head>
-<body style="margin:10px">
+<body style="margin:10px;">
 
-<div class="">
-    {% block content %}{% end %}
-</div>
-
-    <div class="text-right" style="color:#888888">
-        <small>Log2Chart&mdash; v1.3</small>
-    </div>
+{% block content %}{% end %}
 
 </body>
 </html>
