@@ -3,8 +3,8 @@ import tornado.web
 import tornado.websocket
 from tornado.websocket import WebSocketClosedError
 
+from .Semantics import *
 
-from .Segment import *
 
 class IndexHandler(tornado.web.RequestHandler):
     def get(self):
@@ -23,7 +23,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
         # echo
         if tp == '000':
-            msg =  message[3:]
+            msg = message[3:]
             self.send_msg(msg)
         # segment
         elif tp == '001':
@@ -33,7 +33,6 @@ class WSHandler(tornado.websocket.WebSocketHandler):
             self.send_msg(tmp)
 
     def on_close(self):
-        # self.write_message("[Server] Bye")
         self.close()
 
     def send_msg(self, message):
