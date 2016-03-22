@@ -15,15 +15,31 @@ mix = "傻B"
 # ld = ld.decode('utf-8')
 # print type(ld)
 
-# ucn = cn.decode('utf-8')
+ucn = cn.decode('utf-8')
 # ucn = en.decode('utf-8')
-ucn = mix.decode('utf-8')
+# ucn = mix.decode('utf-8')
 
-cn_flag = 0
-en_flag = 1
+chn_flag = 0
+eng_flag = 0
+num_flag = 0
+otr_flag = 0
+
+total_length = len(ucn)
+
 for i in ucn:
-    print(u'\u4e00' <= i <= u'\u9fa5')
+    if u'\u4e00' <= i <= u'\u9fa5':
+        chn_flag += 1
+    elif u'\u0041' <= i <= u'\u005a' and u'\u0061' <= i <= u'\u007a':
+        eng_flag += 1
+    elif u'\u0030' <= i <= u'\u0039':
+        num_flag += 1
+    else:
+        otr_flag += 1
 
+print chn_flag
+print eng_flag
+print num_flag
+print otr_flag
 
 
 

@@ -9,4 +9,8 @@ def segment(sentence):
 
 
 def lang_differ(sentence):
-    pass
+    sentence.decode('utf-8')
+    chn_flag = 0
+    eng_flag = 0
+    num_flag = 0
+    otr_flag = 0
