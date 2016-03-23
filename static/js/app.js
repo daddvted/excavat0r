@@ -7,7 +7,7 @@ $(document).ready(function(){
        $("#result").html("");
     });
 
-    // 000 - echo
+    // 000 - AI
     $("#go_btn").click(function(){
         var msg = "000" + $("#input_txt").val();
         ws.send(msg);
@@ -25,9 +25,21 @@ $(document).ready(function(){
         ws.send(msg);
     });
 
+    // 009 - echo
+    $("#echo_btn").click(function(){
+        var msg = "009" + $("#input_txt").val();
+        ws.send(msg);
+    });
+
+
+
     ws.onmessage = function(event){
         var content = $("<p>"+event.data + "</p>");
         content.appendTo("#result");
+    }
+    ws.onerror = function(event){
+        var err = $("<p>[Client] Lose connection</p>");
+        err.appendTo("#result");
     }
 
 });// document
