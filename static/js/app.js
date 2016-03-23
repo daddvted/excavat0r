@@ -25,6 +25,11 @@ $(document).ready(function(){
         ws.send(msg);
     });
 
+    // 007 - Spider
+    $("spider_btn").click(function(){
+        var msg = "007" + $("#input_txt").val();
+        ws.send(msg)
+    });
     // 009 - echo
     $("#echo_btn").click(function(){
         var msg = "009" + $("#input_txt").val();
