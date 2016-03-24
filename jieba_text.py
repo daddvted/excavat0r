@@ -5,7 +5,7 @@ from jieba import posseg
 # English unicode range [u'\u0041', u'\u005a'] and [u'\u0061', u'\u007a']
 # Number unicode range [u'\u0030', u'\u0039']
 
-cn = "你好sb"
+cn = "你好"
 en = "Hello"
 mix = "傻B"
 sen = "会议的日期"
@@ -16,13 +16,5 @@ sen = "会议的日期"
 # print type(ld)
 # ld = ld.decode('utf-8')
 # print type(ld)
-
-usen = sen.decode("utf-8")
-print type(usen)
-print len(usen)
-seg = posseg.cut(usen)
-
-for word, flag in seg:
-    print word, "-", flag
 
 

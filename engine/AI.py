@@ -1,8 +1,9 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import time
 import random
 from .Semantics import segment, lang_differ
-from .Waiter import get_time
+from .Waiter import Waiter
+from .SpiderMan import SpiderMan
 
 
 class Robot:
@@ -20,6 +21,8 @@ class Robot:
 class MessageHub:
     def __init__(self):
         self.robot = Robot()
+        self.waiter = Waiter()
+        self.spiderman = SpiderMan()
 
     def msg_hub(self, code, msg):
         kw = []
@@ -28,8 +31,9 @@ class MessageHub:
             time_kw = [u"time", u"date", u"today", u"now", u"时间", u"日期", u"时刻"]
             for s in segment(msg):
                 if s.lower() in time_kw:
-                    return get_time()
-            return self.robot.jabber()
+                    return self.waiter.get_time()
+            return self.spiderman.fetch_answer(msg, 0)
+            # return self.robot.jabber()
         # segment
         elif code == '001':
             return "/ ".join(segment(msg))

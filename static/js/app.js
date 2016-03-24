@@ -39,7 +39,7 @@ $(document).ready(function(){
 
 
     ws.onmessage = function(event){
-        var content = $("<p>"+event.data + "</p>");
+        var content = $("<p>[Server] "+event.data + "</p>");
         content.appendTo("#result");
     }
     ws.onerror = function(event){

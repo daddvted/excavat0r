@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import tornado.web
 import tornado.websocket
 from tornado.websocket import WebSocketClosedError
@@ -16,7 +16,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
     def _send2client(self, message):
         try:
-            self.write_message("[Server] " + message)
+            self.write_message(message)
         except WebSocketClosedError:
             self.close()
 

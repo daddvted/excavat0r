@@ -1,10 +1,11 @@
+# -*- coding:utf-8 -*-
 import os
 import tornado.httpserver
 import tornado.ioloop
 import tornado.options
 from tornado.options import define, options
 
-from engine.Handler import *
+from engine.Handlers import *
 
 define("port", default=8000, help="run on the given port", type=int)
 
