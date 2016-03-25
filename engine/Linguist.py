@@ -7,7 +7,7 @@ class Linguist:
     def __init__(self):
         jieba.load_userdict("dat/dict.txt")
 
-    def _differentiate_char(self, uchar):
+    def __differentiate_char(self, uchar):
         flag = 4  # 0-cn, 1-en, 2-num, 3-other
         if u'\u4e00' <= uchar <= u'\u9fa5':
             flag = 0
@@ -23,6 +23,10 @@ class Linguist:
         segment_result = jieba.cut(sentence, cut_all=False)
         return segment_result
 
+    def tag(self, sentence):
+        words = pseg.cut(sentence)
+        return words
+
     def lang_differ(self, sentence):
         # u_sentence = sentence.decode('utf-8')
         # total_length = len(u_sentence)
@@ -32,7 +36,7 @@ class Linguist:
         otr_flag = 0
 
         for word in sentence:
-            flag = _differentiate_char(word)
+            flag = self.__differentiate_char(word)
             if flag == 0:
                 chn_flag += 1
             elif flag == 1:
@@ -54,6 +58,3 @@ class Linguist:
 
         return lang
 
-    def tag(self, sentence):
-        words = pseg.cut(sentence)
-        return words
