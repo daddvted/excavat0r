@@ -25,6 +25,12 @@ $(document).ready(function(){
         ws.send(msg);
     });
 
+    // 003 - Word flag
+    $("#flag_btn").click(function(){
+        var msg = "003" + $("#input_txt").val();
+        ws.send(msg);
+    });
+
     // 007 - Spider
     $("spider_btn").click(function(){
         var msg = "007" + $("#input_txt").val();
@@ -39,7 +45,7 @@ $(document).ready(function(){
 
 
     ws.onmessage = function(event){
-        var content = $("<p>[Server] "+event.data + "</p>");
+        var content = $("<p>[Server] "+ event.data + "</p>");
         content.appendTo("#result");
     }
     ws.onerror = function(event){
