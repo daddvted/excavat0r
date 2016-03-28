@@ -58,3 +58,5 @@ class Linguist:
 
         return lang
 
+    def extract_key(self):
+        pass
