@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% block title %}Q&A{% end %}
+{% block title %}ai1{% end %}
 {% block js%}
-<script type="text/javascript" src="{{ static_url('js/app.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/ai1.js') }}"></script>
 {% end %}
 {% block content %}
 <div class="row">
@@ -20,10 +20,12 @@
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Menu<span class="caret"></span></button>
                 <ul class="dropdown-menu dropdown-menu-right">
                     <li><a id="go_btn" href="#">Go</a></li>
+                    <li><a id="echo_btn" href="#">Echo</a></li>
+                    <li role="separator" class="divider"></li>
                     <li><a id="segment_btn" href="#">分词测试</a></li>
                     <li><a id="flag_btn" href="#">词性测试</a></li>
                     <li><a id="en_cn_btn" href="#">中英文测试</a></li>
-                    <li><a id="echo_btn" href="#">Echo</a></li>
+                    <li><a id="semantic_btn" href="#">简单测试</a></li>
                     <li role="separator" class="divider"></li>
                     <li><a id="clear_btn" href="#">清屏</a></li>
                 </ul>

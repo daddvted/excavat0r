@@ -31,6 +31,13 @@ $(document).ready(function(){
         ws.send(msg);
     });
 
+    // 004 - Simple semantic test
+    $("#semantic_btn").click(function(){
+        var msg = "004" + $("#input_txt").val();
+        ws.send(msg);
+    });
+
+
     // 007 - Spider
     $("spider_btn").click(function(){
         var msg = "007" + $("#input_txt").val();

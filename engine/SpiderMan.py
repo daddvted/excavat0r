@@ -51,7 +51,6 @@ class SpiderMan:
         url = 'http://zhidao.baidu.com/search?word=' + kw
         self.http_headers["host"] = 'zhidao.baidu.com'
         self.http_headers["User-Agent"] = random.choice(self.user_agents)
-        print self.http_headers
         page = requests.get(url, headers=self.http_headers)
         page.encoding = 'gbk'
         tmp = page.content.decode('gbk')
