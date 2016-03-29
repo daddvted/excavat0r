@@ -34,7 +34,7 @@ user_agents = [
     "Opera/9.20 (Windows NT 6.0; U; en)",
     "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.1) Gecko/20061205 Iceweasel/2.0.0.1 (Debian-2.0.0.1+dfsg-2)",
 ]
-host = "www.cdcrj.gov.cn"
+host = "192.168.110.222"
 
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:43.0) Gecko/20100101 Firefox/43.0",
@@ -45,56 +45,11 @@ headers = {
 
 
 # Fetch total page
-url = 'http://www.cdcrj.gov.cn/exitentry/zxkf.htm'
+# url = 'http://www.cdcrj.gov.cn/exitentry/zxkf.htm'
+url = 'http://192.168.110.222'
 headers["User-Agent"] = random.choice(user_agents)
 headers["host"] = host
 page = requests.get(url, headers=headers)
 page.encoding = 'utf-8'
-soup = BeautifulSoup(page.text, "html5lib")
-results = soup.find("div", class_="pagesite")
-page_ptn = results.div.get_text()
-m = re.search(r'[0-9]+/([0-9]+)',page_ptn)
-total_page = int(m.group(1)) + 1
-
-
-config = {
-    'user': 'qa',
-    'password': 'qa',
-    'host': '192.168.110.222',
-    'port': '3306',
-    'database': 'qa',
-    'raise_on_warnings': True,
-}
-cnx = mysql.connector.connect(**config)
-cursor = cnx.cursor()
-
-
-for page_num in range(1,total_page):
-    print "Processing page %s" % page_num
-    time.sleep(2)
-    url = "http://www.cdcrj.gov.cn/exitentry/zxkf_%s.htm" % (str(page_num))
-    headers["User-Agent"] = random.choice(user_agents)
-    headers["host"] = host
-    page = requests.get(url, headers=headers)
-    page.encoding = 'utf-8'
-    soup = BeautifulSoup(page.text, "html5lib")
-    results = soup.find_all("div", class_="lybMessage")
-
-    for r in results:
-        q_title = r.find("h1").text
-        q_desc = r.find_all("span")[1].text
-        answer = str(r.find("h4"))
-        answer = re.sub(r'<h4>\s+', '<h4>', answer)
-        answer = re.sub(r'\s+<\/h4>', '</h4>', answer)
-
-        insert_stmt = (
-            "INSERT INTO exit_and_entry(question_title, question_desc,answer) VALUES(%s, %s, %s)"
-        )
-        data = (q_title, q_desc, answer)
-        cursor.execute(insert_stmt, data)
-    cnx.commit()
-
-cursor.close()
-cnx.close()
-
+print page.status_code
 
