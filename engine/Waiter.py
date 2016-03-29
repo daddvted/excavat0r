@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 class Waiter:
-    def get_time(lang="cn"):
+    def get_time(self, lang="cn"):
         if lang == "cn":
             now = datetime.now().strftime("%Y年%m月%d日 %H:%M:%S")
         else:

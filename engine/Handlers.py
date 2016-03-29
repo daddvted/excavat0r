@@ -3,7 +3,7 @@ import tornado.web
 import tornado.websocket
 from tornado.websocket import WebSocketClosedError
 
-from .AI import MessageHub
+from .MessageRouter import MessageRouter
 
 
 class IndexHandler(tornado.web.RequestHandler):
@@ -12,9 +12,9 @@ class IndexHandler(tornado.web.RequestHandler):
 
 
 class WSHandler(tornado.websocket.WebSocketHandler):
-    hub = MessageHub()
+    router = MessageRouter()
 
-    def __send2client(self, message):
+    def _send2client(self, message):
         try:
             self.write_message(message)
         except WebSocketClosedError:
@@ -24,15 +24,15 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         return True
 
     def open(self):
-        self.__send2client("Ready")
+        self._send2client("Ready")
 
     def on_message(self, message):
         code = message[:3]
         msg = message[3:]
         if code == '009':
-            self.__send2client("Wait a second")
-        result = self.hub.msg_hub(code, msg)
-        self.__send2client(result)
+            self._send2client("Wait a second")
+        result = self.router.routing(code, msg)
+        self._send2client(result)
 
     def on_close(self):
         self.close()

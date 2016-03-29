@@ -31,21 +31,23 @@ class SpiderMan:
     http_headers = {
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         "Accept-Language": "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3",
-        "Accept-Encoding": "Accept-Encoding",
+        "Accept-Encoding": "gzip, deflate",
     }
 
-    def __360wenda(self, kw):
-        url = 'http://wenda.so.com/search/?q='
+    def _360wenda(self, kw):
+        print kw
+        url = 'http://wenda.so.com/search/?q=' + kw
         self.http_headers["host"] = 'wenda.so.com'
         self.http_headers["User-Agent"] = random.choice(self.user_agents)
+        print self.http_headers
         page = requests.get(url, headers=self.http_headers)
         page.encoding = 'utf-8'
         soup = BeautifulSoup(page.text, "html5lib")
         html = soup.find("ul", class_="qa-list")
         return unicode(html)
 
-    def __zhidao(self, kw):
-        url = 'http://zhidao.baidu.com/search?word='
+    def _zhidao(self, kw):
+        url = 'http://zhidao.baidu.com/search?word=' + kw
         self.http_headers["host"] = 'zhidao.baidu.com'
         self.http_headers["User-Agent"] = random.choice(self.user_agents)
         page = requests.get(url, headers=self.http_headers)
@@ -60,6 +62,6 @@ class SpiderMan:
         # 1 - 百度知道
 
         if site == 0:
-            return self.__360wenda(kw)
+            return self._360wenda(kw)
         elif site == 1:
-            return self.__zhidao(kw)
+            return self._zhidao(kw)

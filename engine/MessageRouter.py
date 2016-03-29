@@ -1,31 +1,19 @@
 # -*- coding: utf-8 -*-
 import time
-import random
 from .Linguist import Linguist
 from .Waiter import Waiter
 from .SpiderMan import SpiderMan
+from .Robot import Robot
 
 
-class Robot:
-    chat = []
-
-    def __init__(self):
-        with open("dat/chat.txt", 'r') as chat_dat:
-            self.chat = chat_dat.readlines()
-
-    def jabber(self):
-        random.shuffle(self.chat)
-        return self.chat[0]
-
-
-class MessageHub:
+class MessageRouter:
     def __init__(self):
         self.robot = Robot()
         self.waiter = Waiter()
         self.spiderman = SpiderMan()
         self.linguist = Linguist()
 
-    def msg_hub(self, code, msg):
+    def routing(self, code, msg):
         kw = []
         # AI
         if code == '000':
@@ -33,7 +21,7 @@ class MessageHub:
             for s in self.linguist.segment(msg):
                 if s.lower() in time_kw:
                     return self.waiter.get_time()
-            return self.spiderman.fetch_answer(msg, 0)
+            return self.spiderman.start2crawl(msg, 1)
             # return self.robot.jabber()
         # segment
         elif code == '001':
