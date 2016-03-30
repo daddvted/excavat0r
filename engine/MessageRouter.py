@@ -37,7 +37,8 @@ class MessageRouter:
                 html += "<li>" + word + ":" + flag + "</li>"
             html += "</ul>"
             return html
-
+        elif code == '004':
+            return self.linguist.analyze_semantic(msg)
         # echo
         elif code == '009':
             time.sleep(1)

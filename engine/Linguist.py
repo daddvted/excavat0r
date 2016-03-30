@@ -1,11 +1,19 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+import json
+import codecs
 import jieba
 import jieba.posseg as pseg
+from jieba.analyse import extract_tags
 
 
 class Linguist:
+    tags = {}
+
     def __init__(self):
         jieba.load_userdict("dat/dict.txt")
+        with codecs.open("dat/tags.json", "r", "utf-8") as t:
+            self.tags = json.load(t)
 
     def _differentiate_char(self, uchar):
         flag = 4  # 0-cn, 1-en, 2-num, 3-other
@@ -57,5 +65,10 @@ class Linguist:
 
         return lang
 
-    def extract_key(self):
-        pass
+    def analyze_semantic(self, sentence):
+        # words = extract_tags(sentence, 5, allowPOS=('n', 'ns'))
+        # words = extract_tags(sentence, topK=10, withWeight=True)
+        words = extract_tags(sentence, topK=5)
+        # for w, wt in words:
+        #     print w, wt
+        return "|".join(words)
