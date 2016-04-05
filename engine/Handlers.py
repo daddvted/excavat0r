@@ -33,11 +33,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         if code == '009':
             self._send2client("Wait a second")
         result = self.router.routing(code, msg)
-        cat = result[0]
-        bits = result[1:]
-        bits_int = int(bits, 2)
-
-        self._send2client(cat + str(bits_int))
+        self._send2client(result)
 
     def on_close(self):
         self.close()

@@ -8,12 +8,16 @@ from jieba.analyse import extract_tags
 
 
 class Linguist:
-    tags = {}
+    categories = {}
+    matrix = []
 
     def __init__(self):
         jieba.load_userdict("dat/dict.txt")
-        with codecs.open("dat/tags.json", "r", "utf-8") as t:
-            self.tags = json.load(t)
+
+        with codecs.open("dat/categories.json", "r", "utf-8") as c:
+            self.categories = json.load(c)
+        with codecs.open("dat/matrix.json", "r", "utf-8") as m:
+            self.matrix = json.load(m)
 
     def _differentiate_char(self, uchar):
         flag = 4  # 0-cn, 1-en, 2-num, 3-other
@@ -26,42 +30,11 @@ class Linguist:
         return flag
 
     def _set_attr_bit(self, attr_list):
-        cat = ""
-        categories = {
-            'A': ["社保", "社保局", "养老保险", "医疗保险", "生育保险", "工伤保险", "失业保险"],
-            'B': ["出入境", "通行证", "护照", "签注", "签证"],
-            'C': ["公积金", "住房公积金"],
-        }
 
-        hit = 0
-        for attr in attr_list:
-            for k in categories.keys():
-                if attr in categories[k]:
-                    cat = k
-                    hit = 1
-                    attr_list.remove(attr)
-                    break
-            if hit:
-                break
-        print cat
-        print "after extract category: ", "|".join(attr_list)
-        matrix = [
-            ["办理", "办", "申请", "申办", "申领"],  # 0
-            ["局", "管理局", "管理中心", "中心", "机构", "办事处"],  # 1
-            ["地址", "地点", "地方", "哪里", "那里"],  # 2
-            ["港澳", "台湾", '港澳台'],  # 3
-            ["户口", "户籍"],  # 4
-            ["异省", "外地", "异地", "外省"],  # 5
-            ["请问", "咨询"],  # 6
-            ["缴费", "缴存"],  # 7
-            ["时间", "多久"],  # 8
-            ["过期"],  # 9
-            ["进度"],  # 10
-        ]
         bits = []
         for attr in attr_list:
             s = ""
-            for synonym in matrix:
+            for synonym in self.matrix:
                 if attr in synonym:
                     s = '1' + s
                 else:
@@ -71,10 +44,42 @@ class Linguist:
         for bit in bits:
             final_bit |= int(bit, 2)
 
-        bits_id = bin(final_bit)[2:]
-        print bits_id
-        return cat + bits_id
-        # return str(final_bit)
+        bits_id = bin(final_bit)[2:]  # bin(xxx) output '0b11011'
+        return bits_id
+
+    def categorizer(self, sentence):
+        key_num = len(self.matrix)
+        tags = extract_tags(sentence, topK=key_num)
+        print "Before: ", "|".join(tags)
+        cat = ""
+        hit = 0
+        for t in tags:
+            for k in self.categories.keys():
+                if t in self.categories[k]:
+                    cat = k
+                    hit = 1
+                    tags.remove(t)
+                    break
+            if hit:
+                break
+
+        if not hit:
+            return 'X', '0'
+        else:  # To the end of this function
+            print "After: ", "|".join(tags)
+            bits = self._set_attr_bit(tags)
+            return cat, bits
+
+    # ====================================
+    # Test function
+    # ====================================
+    def extrac_keyword_code(self, sentence):
+        # Extract top 5(length of the attributes matrix) keywords(tag)
+        # "words" is a list, the 1st element is always the category
+        # keyword which is set with the highest priority in "idf.txt"
+        cat, bits = self.categorizer(sentence)
+
+        return cat, bits
 
     def segment(self, sentence):
         # segment_result = jieba.cut(sentence, cut_all=True)
@@ -115,17 +120,3 @@ class Linguist:
             lang.append('otr')
 
         return lang
-
-    def analyze_semantic(self, sentence):
-        # words = extract_tags(sentence, 5, allowPOS=('n', 'ns'))
-        # words = extract_tags(sentence, topK=10, withWeight=True)
-
-        # Extract top 5 keywords(tag)
-        # "words" is a list, the 1st element is always the category
-        # keyword which is set with the highest priority in "idf.txt"
-        words = extract_tags(sentence, topK=5)
-        print "keywords:", "|".join(words)  # debug
-
-        code = self._set_attr_bit(words)
-        print code
-        return code
