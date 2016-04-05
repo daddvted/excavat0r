@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 # Spider for　成都市公安局出入境管理局－在线答疑
 import time
 import mysql.connector

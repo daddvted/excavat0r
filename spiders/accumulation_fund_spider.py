@@ -59,8 +59,8 @@ class AccumulationFundSpider(SpiderMan):
             'database': 'qa',
             'raise_on_warnings': True,
         }
-        cnx = mysql.connector.connect(**config)
-        cursor = cnx.cursor()
+        conn = mysql.connector.connect(**config)
+        cursor = conn.cursor()
 
         for q in question_urls:
             print "processing %s" % q
@@ -77,9 +77,9 @@ class AccumulationFundSpider(SpiderMan):
             )
             data = (unicode(question), unicode(answer))
             cursor.execute(insert_stmt, data)
-            cnx.commit()
+            conn.commit()
         cursor.close()
-        cnx.close()
+        conn.close()
 
 
 if __name__ == "__main__":

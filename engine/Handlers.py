@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import tornado.web
 import tornado.websocket
 from tornado.websocket import WebSocketClosedError
@@ -32,7 +33,11 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         if code == '009':
             self._send2client("Wait a second")
         result = self.router.routing(code, msg)
-        self._send2client(result)
+        cat = result[0]
+        bits = result[1:]
+        bits_int = int(bits, 2)
+
+        self._send2client(cat + str(bits_int))
 
     def on_close(self):
         self.close()

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import time
 from .Linguist import Linguist
 from .Waiter import Waiter
@@ -28,7 +29,7 @@ class MessageRouter:
             return "/ ".join(self.linguist.segment(msg))
         # language identify
         elif code == '002':
-            return self.linguist.lang_differ(msg)
+            return "|".join(self.linguist.lang_differ(msg))
         # word flag
         elif code == '003':
             flags = self.linguist.tag(msg)

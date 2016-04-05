@@ -31,8 +31,8 @@ $(document).ready(function(){
         ws.send(msg);
     });
 
-    // 004 - Simple semantic test
-    $("#semantic_btn").click(function(){
+    // 004 - Keywords extract
+    $("#extract_btn").click(function(){
         var msg = "004" + $("#input_txt").val();
         ws.send(msg);
     });
