@@ -30,7 +30,6 @@ class Linguist:
         return flag
 
     def _set_attr_bit(self, attr_list):
-
         bits = []
         for attr in attr_list:
             s = ""

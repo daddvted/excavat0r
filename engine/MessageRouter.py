@@ -9,14 +9,6 @@ from .Robot import Robot
 
 
 class MessageRouter:
-    config = {
-        'user': 'root',
-        'password': 'hello',
-        'host': '192.168.110.222',
-        'port': '3306',
-        'database': 'ai1',
-        'raise_on_warnings': True,
-    }
 
     def __init__(self):
         self.robot = Robot()
@@ -29,22 +21,37 @@ class MessageRouter:
     def routing(self, code, msg):
         kw = []
         # ====================================
-        #            Fake AI
+        #              Fake AI
         # ====================================
         if code == '000':
+            config = {
+                'user': 'root',
+                'password': 'hello',
+                'host': '192.168.86.86',
+                'port': '3306',
+                'database': 'ai1',
+                'raise_on_warnings': True,
+            }
+
+            html = "<div>"
+
             cat, bits = self.linguist.categorizer(msg)
-            conn = mysql.connector.connect(**self.config)
-            cursor = self.conn.cursor()
-            query = ("SELECT answer, bits_int FROM qa "
-                     "WHERE category='%s'")
-            cursor.execute(self.query, cat)
+            if cat == 'X':
+                return "不明白"
+            else:
+                attr_int = int(bits, 2)
+                conn = mysql.connector.connect(**config)
+                cursor = conn.cursor()
+                query = "SELECT answer, bits_int FROM qa WHERE category='%s'" % cat
+                cursor.execute(query)
+                for (answer, bits_int) in cursor:
+                    if attr_int == (attr_int & bits_int):
+                        html += "<p>%s</p>" % answer
 
-            for (answer, bits_int) in cursor:
-                print bits_int, answer
-
-            cursor.close()
-            conn.close()
-            return "query db"
+                html += "</div>"
+                cursor.close()
+                conn.close()
+                return html
 
         # segment
         elif code == '001':
