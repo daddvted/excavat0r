@@ -19,8 +19,8 @@ $(document).ready(function(){
         ws.send(msg);
     });
 
-    // 002 - English/Chinese/Number test
-    $("#en_cn_btn").click(function(){
+    // 002 - extract keyword
+    $("#keyword_btn").click(function(){
         var msg = "002" + $("#input_txt").val();
         ws.send(msg);
     });
@@ -31,8 +31,8 @@ $(document).ready(function(){
         ws.send(msg);
     });
 
-    // 004 - Keywords extract
-    $("#extract_btn").click(function(){
+    // 004 - extract keyword code
+    $("#keyword_code_btn").click(function(){
         var msg = "004" + $("#input_txt").val();
         ws.send(msg);
     });

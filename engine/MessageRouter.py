@@ -10,7 +10,6 @@ from .Waiter import Waiter
 
 
 class MessageRouter:
-
     def __init__(self):
         self.robot = Robot()
         self.waiter = Waiter()
@@ -27,19 +26,30 @@ class MessageRouter:
             config = {
                 'user': 'root',
                 'password': 'hello',
-                'host': '192.168.110.222',
+                'host': '10.0.0.8',
                 'port': '3306',
                 'database': 'ai1',
                 'raise_on_warnings': True,
             }
-
-            html = "<div>"
+            conn = mysql.connector.connect(**config)
+            cursor = conn.cursor()
 
             cat, attrs = self.linguist.get_category(msg)
             print cat
             if cat == "A":
+                html = "<div>"
                 bits = self.linguist.get_bits(cat, attrs)
-                return "公积金%s" % bits
+                print "A" + bits
+                bits_int_id = int(bits, 2)
+                print bits_int_id
+                query_sql = "SELECT question, answer, bits_int FROM cd_accumulation_fund WHERE bits_int>=%d" % bits_int_id
+                cursor.execute(query_sql)
+                for question, answer, bits_int in cursor:
+                    if bits_int & bits_int_id == bits_int_id:
+                        html += "<p>%s</p>" % question
+                html += "</div>"
+
+                return html
             elif cat == "B":
                 bits = self.linguist.get_bits(cat, attrs)
                 return "出入境%s" % bits
@@ -71,7 +81,7 @@ class MessageRouter:
 
         # keywords extraction
         elif code == '002':
-            return "|".join(Linguist.extract_keyword_code(msg))
+            return "|".join(Linguist.extract_keyword(msg))
 
         # word flag
         elif code == '003':
@@ -82,11 +92,11 @@ class MessageRouter:
             html += "</ul>"
             return html
         elif code == '004':
-            cat, bits = self.linguist.extract_keyword_code(msg)
+            cat, attrs = self.linguist.get_category(msg)
             if cat == 'X':
                 return "I don't understand :/"
             else:
+                bits = self.linguist.get_bits(cat, attrs)
                 bits_int = int(bits, 2)
 
                 return "%s | %d | %s" % (cat, bits_int, bits)
-

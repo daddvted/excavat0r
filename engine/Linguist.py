@@ -5,24 +5,24 @@ import json
 import codecs
 import os.path
 
-import jieba
+import jieba.analyse
 import jieba.posseg as pseg
-from jieba.analyse import extract_tags
 
 
 class Linguist:
     categories = {}
 
-    def __init__(self, self_dict=False, category_json=False):
-
+    def __init__(self, self_dict=None, category_json=None):
         file_path = os.path.dirname(os.path.abspath(__file__))
         self.base_path = os.path.dirname(file_path)
 
         if self_dict:
             jieba.load_userdict(os.path.join(self.base_path, "dat/dict.txt"))
+            # jieba.load_userdict(self_dict)
 
         if category_json:
             with codecs.open(os.path.join(self.base_path, "dat/categories.json"), "r", "utf-8") as c:
+            # with codecs.open(category_json, "r", "utf-8") as c:
                 self.categories = json.load(c)
 
     @staticmethod
@@ -68,28 +68,32 @@ class Linguist:
         return lang
 
     def get_bits(self, cat=None, attr_list=None):
-        with codecs.open(os.path.join(self.base_path, "dat/matrix%s.json" % cat), "r", "utf-8") as m:
-            matrix = json.load(m)
+        if len(attr_list):
+            with codecs.open(os.path.join(self.base_path, "dat/matrix%s.json" % cat), "r", "utf-8") as m:
+                matrix = json.load(m)
 
-        print "matrix length:", len(matrix)
-        bits = []
-        for attr in attr_list:
-            s = ""
-            for synonym in matrix:
-                if attr in synonym:
-                    s = '1' + s
-                else:
-                    s = '0' + s
-            bits.append(s)
-        final_bit = 0
-        for bit in bits:
-            final_bit |= int(bit, 2)
+            print "matrix length:", len(matrix)
+            bits = []
+            for attr in attr_list:
+                s = ""
+                for synonym in matrix:
+                    if attr in synonym:
+                        s = '1' + s
+                    else:
+                        s = '0' + s
+                bits.append(s)
+            final_bit = 0
+            for bit in bits:
+                final_bit |= int(bit, 2)
 
-        bits_id = bin(final_bit)[2:]  # bin(xxx) output '0b11011'
-        return bits_id
+            bits_id = bin(final_bit)[2:]  # bin(xxx) output '0b11011'
+            return bits_id
+        else:
+            return '0'
 
     def get_category(self, sentence):
-        tags = extract_tags(sentence)
+        jieba.analyse.set_idf_path(os.path.join(self.base_path, "dat/self_idf.txt"))
+        tags = jieba.analyse.extract_tags(sentence, topK=32)
         print "Keywords: ", "|".join(tags)
         cat = ""
         hit = 0
@@ -104,7 +108,7 @@ class Linguist:
                 break
 
         if not hit:
-            return 'X', '0'
+            return 'X', []
         else:  # To the end of this function
             print "Attrs: ", "|".join(tags)
             return cat, tags
@@ -113,8 +117,8 @@ class Linguist:
     #           Test function
     # ====================================
     @staticmethod
-    def extract_keyword_code(sentence):
-        return extract_tags(sentence)
+    def extract_keyword(sentence):
+        return jieba.analyse.extract_tags(sentence)
 
     @staticmethod
     def segment(sentence):
