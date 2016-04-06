@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import tornado.web
 import tornado.websocket
 from tornado.websocket import WebSocketClosedError
@@ -30,8 +31,6 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     def on_message(self, message):
         code = message[:3]
         msg = message[3:]
-        if code == '009':
-            self._send2client("Wait a second")
         result = self.router.routing(code, msg)
         self._send2client(result)
 

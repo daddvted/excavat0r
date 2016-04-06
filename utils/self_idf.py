@@ -9,7 +9,7 @@ matrix = []
 with codecs.open("../dat/categories.json", "r", "utf-8") as c:
     categories = json.load(c)
 
-with codecs.open("../dat/matrix.json", "r", "utf-8") as m:
+with codecs.open("../dat/matrixA.json", "r", "utf-8") as m:
     matrix = json.load(m)
 
 fh = codecs.open("self_idf.txt", "w", "utf-8")
