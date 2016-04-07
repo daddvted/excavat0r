@@ -22,7 +22,6 @@ class Linguist:
 
         if category_json:
             with codecs.open(os.path.join(self.base_path, "dat/categories.json"), "r", "utf-8") as c:
-            # with codecs.open(category_json, "r", "utf-8") as c:
                 self.categories = json.load(c)
 
     @staticmethod
@@ -69,9 +68,10 @@ class Linguist:
 
     def get_bits(self, cat=None, attr_list=None):
         if len(attr_list):
-            with codecs.open(os.path.join(self.base_path, "dat/matrix%s.json" % cat), "r", "utf-8") as m:
-                matrix = json.load(m)
+            with codecs.open(os.path.join(self.base_path, "dat/matrix.json"), "r", "utf-8") as m:
+                tmp = json.load(m)
 
+            matrix = tmp[cat]
             print "matrix length:", len(matrix)
             bits = []
             for attr in attr_list:
@@ -94,7 +94,7 @@ class Linguist:
     def get_category(self, sentence):
         jieba.analyse.set_idf_path(os.path.join(self.base_path, "dat/self_idf.txt"))
         tags = jieba.analyse.extract_tags(sentence, topK=32)
-        print "Keywords: ", "|".join(tags)
+        print "Category: ", "|".join(tags)
         cat = ""
         hit = 0
         for t in tags:
@@ -116,8 +116,8 @@ class Linguist:
     # ====================================
     #           Test function
     # ====================================
-    @staticmethod
-    def extract_keyword(sentence):
+    def extract_keyword(self, sentence):
+        jieba.analyse.set_idf_path(os.path.join(self.base_path, "dat/self_idf.txt"))
         return jieba.analyse.extract_tags(sentence)
 
     @staticmethod

@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 from engine.SpiderMan import SpiderMan
 
 
-class AccumulationFundSpider(SpiderMan):
+class CDFundSpider(SpiderMan):
     def __init__(self, host):
         self.host = host
         url = "http://%s/index.php?m=content&c=index&a=lists&catid=55" % host
@@ -83,7 +83,7 @@ class AccumulationFundSpider(SpiderMan):
 
 
 if __name__ == "__main__":
-    spider = AccumulationFundSpider("www.cdzfgjj.gov.cn")
+    spider = CDFundSpider("www.cdzfgjj.gov.cn")
     spider.start2crawl()
 
 

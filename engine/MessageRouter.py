@@ -26,7 +26,7 @@ class MessageRouter:
             config = {
                 'user': 'root',
                 'password': 'hello',
-                'host': '10.0.0.8',
+                'host': '192.168.110.222',
                 'port': '3306',
                 'database': 'ai1',
                 'raise_on_warnings': True,
@@ -36,26 +36,20 @@ class MessageRouter:
 
             cat, attrs = self.linguist.get_category(msg)
             print cat
-            if cat == "A":
+            if cat != "X":
                 html = "<div>"
                 bits = self.linguist.get_bits(cat, attrs)
-                print "A" + bits
+                print cat + bits
                 bits_int_id = int(bits, 2)
                 print bits_int_id
-                query_sql = "SELECT question, answer, bits_int FROM cd_accumulation_fund WHERE bits_int>=%d" % bits_int_id
+                query_sql = "SELECT question, answer, bits_int FROM %s WHERE bits_int>=%d" % (cat,bits_int_id)
                 cursor.execute(query_sql)
                 for question, answer, bits_int in cursor:
                     if bits_int & bits_int_id == bits_int_id:
-                        html += "<p>%s</p>" % question
+                        html += '<p><a href="#">%s</a></p>' % question
                 html += "</div>"
 
                 return html
-            elif cat == "B":
-                bits = self.linguist.get_bits(cat, attrs)
-                return "出入境%s" % bits
-            elif cat == "C":
-                bits = self.linguist.get_bits(cat, attrs)
-                return "社保%s" % bits
             else:
                 return "I don't understand :/"
                 # attr_int = int(bits, 2)
@@ -81,7 +75,8 @@ class MessageRouter:
 
         # keywords extraction
         elif code == '002':
-            return "|".join(Linguist.extract_keyword(msg))
+            return "|".join(self.linguist.extract_keyword(msg))
+            # return "|".join(Linguist.extract_keyword(msg))
 
         # word flag
         elif code == '003':

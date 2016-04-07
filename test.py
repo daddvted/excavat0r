@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import jieba.posseg as pseg
+import urllib
 
-
-s = "查询"
-
+s = "怪物猎人"
+print len(s)
