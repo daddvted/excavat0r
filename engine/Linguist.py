@@ -72,7 +72,6 @@ class Linguist:
                 tmp = json.load(m)
 
             matrix = tmp[cat]
-            print "matrix length:", len(matrix)
             bits = []
             for attr in attr_list:
                 s = ""
@@ -94,7 +93,6 @@ class Linguist:
     def get_category(self, sentence):
         jieba.analyse.set_idf_path(os.path.join(self.base_path, "dat/self_idf.txt"))
         tags = jieba.analyse.extract_tags(sentence, topK=32)
-        print "Category: ", "|".join(tags)
         cat = ""
         hit = 0
         for t in tags:
@@ -110,7 +108,6 @@ class Linguist:
         if not hit:
             return 'X', []
         else:  # To the end of this function
-            print "Attrs: ", "|".join(tags)
             return cat, tags
 
     # ====================================

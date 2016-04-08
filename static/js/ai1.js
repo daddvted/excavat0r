@@ -52,6 +52,7 @@ $(document).ready(function(){
 
 
     ws.onmessage = function(event){
+        $("#result").html("");
         var content = $("<p>[Server] "+ event.data + "</p>");
         content.appendTo("#result");
     }

@@ -2,13 +2,13 @@
 from __future__ import unicode_literals
 import codecs
 
-# filename = "cd_fund_freq.txt"
+filename = "cd_fund_freq.txt"
 # filename = "exit_entry_freq.txt"
-filename = "cd_social_security_freq.txt"
+# filename = "cd_social_security_freq.txt"
 tag = {}
 
-# filter_list = ["j", "n", "nz", "v", "vn", "x"]
-filter_list = ["v", "vn"]
+filter_list = ["j", "n", "nz", "v", "vn", "x"]
+# filter_list = ["v", "vn"]
 word_length = 2
 
 file_in = codecs.open(filename, 'r', 'utf-8')

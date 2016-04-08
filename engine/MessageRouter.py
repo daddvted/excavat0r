@@ -26,27 +26,28 @@ class MessageRouter:
             config = {
                 'user': 'root',
                 'password': 'hello',
-                'host': '192.168.110.222',
+                'host': '192.168.1.192',
+                # 'host': '192.168.110.222',
                 'port': '3306',
                 'database': 'ai1',
                 'raise_on_warnings': True,
             }
             conn = mysql.connector.connect(**config)
             cursor = conn.cursor()
+            # cursor = conn.cursor(buffered=True)
 
             cat, attrs = self.linguist.get_category(msg)
-            print cat
             if cat != "X":
                 html = "<div>"
                 bits = self.linguist.get_bits(cat, attrs)
-                print cat + bits
                 bits_int_id = int(bits, 2)
-                print bits_int_id
-                query_sql = "SELECT question, answer, bits_int FROM %s WHERE bits_int>=%d" % (cat,bits_int_id)
+                query_sql = "SELECT question, answer, bits_int FROM %s WHERE bits_int>=%d" % (cat, bits_int_id)
                 cursor.execute(query_sql)
+                print cursor.rowcount
                 for question, answer, bits_int in cursor:
                     if bits_int & bits_int_id == bits_int_id:
                         html += '<p><a href="#">%s</a></p>' % question
+
                 html += "</div>"
 
                 return html
