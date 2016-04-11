@@ -19,11 +19,4 @@ for l in categories.values():
         line = "%s 100\n" % item
         fh.write(line)
 
-with codecs.open(os.path.join(base_path, "dat/matrix.json"), "r", "utf-8") as m:
-    matrix = json.load(m)
-    for m in matrix.values():
-        for l in m:
-            for item in l:
-                line = "%s 90.00\n" % item
-                fh.write(line)
 fh.close()

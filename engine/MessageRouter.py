@@ -14,7 +14,7 @@ class MessageRouter:
         self.robot = Robot()
         self.waiter = Waiter()
         self.spiderman = SpiderMan()
-        self.linguist = Linguist(True, True)
+        self.linguist = Linguist()
 
         # init db connection
 
@@ -26,7 +26,7 @@ class MessageRouter:
             config = {
                 'user': 'root',
                 'password': 'hello',
-                'host': '192.168.1.192',
+                'host': '192.168.1.26',
                 # 'host': '192.168.110.222',
                 'port': '3306',
                 'database': 'ai1',
@@ -36,19 +36,27 @@ class MessageRouter:
             cursor = conn.cursor()
             # cursor = conn.cursor(buffered=True)
 
-            cat, attrs = self.linguist.get_category(msg)
+            cat = self.linguist.get_category(msg)
             if cat != "X":
                 html = "<div>"
-                bits = self.linguist.get_bits(cat, attrs)
-                bits_int_id = int(bits, 2)
-                query_sql = "SELECT question, answer, bits_int FROM %s WHERE bits_int>=%d" % (cat, bits_int_id)
-                cursor.execute(query_sql)
-                print cursor.rowcount
-                for question, answer, bits_int in cursor:
-                    if bits_int & bits_int_id == bits_int_id:
-                        html += '<p><a href="#">%s</a></p>' % question
 
-                html += "</div>"
+                question_ids = self.linguist.seek(cat, "".join(msg))
+
+                if len(question_ids) == 1:
+                    query = "SELECT answer FROM %s WHERE id=%i" % (cat, question_ids[0])
+                    cursor.execute(query)
+                    for result in cursor:
+                        html += result[0]
+                    html += "</div>"
+                else:
+                    for qid in question_ids:
+                        print type(qid)
+                        query = "SELECT question FROM %s WHERE id=%i" % (cat, qid)
+                        cursor.execute(query)
+                        html += "<ul>"
+                        for result in cursor:
+                            html += '<li><a href="#">%s</a></li>' % result[0]
+                        html += "</ul></div>"
 
                 return html
             else:

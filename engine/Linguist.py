@@ -7,22 +7,21 @@ import os.path
 
 import jieba.analyse
 import jieba.posseg as pseg
+import xapian
 
 
 class Linguist:
     categories = {}
 
-    def __init__(self, self_dict=None, category_json=None):
+    def __init__(self):
         file_path = os.path.dirname(os.path.abspath(__file__))
         self.base_path = os.path.dirname(file_path)
 
-        if self_dict:
-            jieba.load_userdict(os.path.join(self.base_path, "dat/dict.txt"))
-            # jieba.load_userdict(self_dict)
+        jieba.load_userdict(os.path.join(self.base_path, "dat/self_idf.txt"))
+        # jieba.load_userdict(self_dict)
 
-        if category_json:
-            with codecs.open(os.path.join(self.base_path, "dat/categories.json"), "r", "utf-8") as c:
-                self.categories = json.load(c)
+        with codecs.open(os.path.join(self.base_path, "dat/categories.json"), "r", "utf-8") as c:
+            self.categories = json.load(c)
 
     @staticmethod
     def _differentiate_char(uchar):
@@ -66,30 +65,49 @@ class Linguist:
             lang.append('otr')
         return lang
 
-    def get_bits(self, cat=None, attr_list=None):
-        if len(attr_list):
-            with codecs.open(os.path.join(self.base_path, "dat/matrix.json"), "r", "utf-8") as m:
-                tmp = json.load(m)
+    # def get_bits(self, cat=None, attr_list=None):
+    #     if len(attr_list):
+    #         with codecs.open(os.path.join(self.base_path, "dat/matrix.json"), "r", "utf-8") as m:
+    #             tmp = json.load(m)
+    #
+    #         matrix = tmp[cat]
+    #         bits = []
+    #         for attr in attr_list:
+    #             s = ""
+    #             for synonym in matrix:
+    #                 if attr in synonym:
+    #                     s = '1' + s
+    #                 else:
+    #                     s = '0' + s
+    #             bits.append(s)
+    #         final_bit = 0
+    #         for bit in bits:
+    #             final_bit |= int(bit, 2)
+    #
+    #         bits_id = bin(final_bit)[2:]  # bin(xxx) output '0b11011'
+    #         return bits_id
+    #     else:
+    #         return '0'
 
-            matrix = tmp[cat]
-            bits = []
-            for attr in attr_list:
-                s = ""
-                for synonym in matrix:
-                    if attr in synonym:
-                        s = '1' + s
-                    else:
-                        s = '0' + s
-                bits.append(s)
-            final_bit = 0
-            for bit in bits:
-                final_bit |= int(bit, 2)
-
-            bits_id = bin(final_bit)[2:]  # bin(xxx) output '0b11011'
-            return bits_id
-        else:
-            return '0'
-
+    # def get_category(self, sentence):
+    #     jieba.analyse.set_idf_path(os.path.join(self.base_path, "dat/self_idf.txt"))
+    #     tags = jieba.analyse.extract_tags(sentence, topK=32)
+    #     cat = ""
+    #     hit = 0
+    #     for t in tags:
+    #         for k in self.categories.keys():
+    #             if t in self.categories[k]:
+    #                 cat = k
+    #                 hit = 1
+    #                 tags.remove(t)
+    #                 break
+    #         if hit:
+    #             break
+    #
+    #     if not hit:
+    #         return 'X', []
+    #     else:  # To the end of this function
+    #         return cat, tags
     def get_category(self, sentence):
         jieba.analyse.set_idf_path(os.path.join(self.base_path, "dat/self_idf.txt"))
         tags = jieba.analyse.extract_tags(sentence, topK=32)
@@ -100,15 +118,43 @@ class Linguist:
                 if t in self.categories[k]:
                     cat = k
                     hit = 1
-                    tags.remove(t)
                     break
             if hit:
                 break
-
         if not hit:
-            return 'X', []
-        else:  # To the end of this function
-            return cat, tags
+            return 'X'
+        else:
+            return cat
+
+    def seek(self, category, sentence):
+        print "Category: %s" % category
+        db_name = "dat/index/" + category
+        db_path = os.path.join(self.base_path, db_name)
+        print db_path
+        index_db = xapian.WritableDatabase(db_path, xapian.DB_OPEN)
+        enquire = xapian.Enquire(index_db)
+
+        query_list = []
+        print "cut for search"
+        print "|".join(jieba.cut_for_search(sentence))
+        for word in jieba.cut_for_search(sentence):
+            query = xapian.Query(word)
+            query_list.append(query)
+
+        if len(query_list) == 1:
+            query = query_list[0]
+        else:
+            query = xapian.Query(xapian.Query.OP_AND, query_list)
+
+        enquire.set_query(query)
+        matches = enquire.get_mset(0, 10, None)
+        print "%s matches found" % matches.get_matches_estimated()
+
+        docids = []
+        for m in matches:
+            docids.append(m.docid)
+
+        return docids
 
     # ====================================
     #           Test function
@@ -125,4 +171,3 @@ class Linguist:
     @staticmethod
     def tag(sentence):
         return pseg.cut(sentence)
-
