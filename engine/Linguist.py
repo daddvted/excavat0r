@@ -133,12 +133,15 @@ class Linguist:
         print db_path
         index_db = xapian.WritableDatabase(db_path, xapian.DB_OPEN)
         enquire = xapian.Enquire(index_db)
+        query_parser = xapian.QueryParser()
+        query_parser.set_database(index_db)
 
         query_list = []
         print "cut for search"
         print "|".join(jieba.cut_for_search(sentence))
         for word in jieba.cut_for_search(sentence):
-            query = xapian.Query(word)
+            query = query_parser.parse_query(word)
+            # query = xapian.Query(word)
             query_list.append(query)
 
         if len(query_list) == 1:
