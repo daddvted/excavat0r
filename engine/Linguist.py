@@ -136,6 +136,7 @@ class Linguist:
         query_parser.set_database(index_db)
 
         query_list = []
+        print "Cut for search: ", "|".join(Linguist.segment(sentence))
         for word in Linguist.segment(sentence):
             print type(word)
             query = query_parser.parse_query(
