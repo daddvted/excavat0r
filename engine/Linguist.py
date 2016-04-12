@@ -130,27 +130,24 @@ class Linguist:
         print "Category: %s" % category
         db_name = "dat/index/" + category
         db_path = os.path.join(self.base_path, db_name)
-        print db_path
         index_db = xapian.WritableDatabase(db_path, xapian.DB_OPEN)
         enquire = xapian.Enquire(index_db)
         query_parser = xapian.QueryParser()
         query_parser.set_database(index_db)
 
         query_list = []
-        print "cut for search"
-        print "|".join(jieba.cut_for_search(sentence))
-        for word in jieba.cut_for_search(sentence):
-            query = query_parser.parse_query(word)
-            # query = xapian.Query(word)
+        for word in Linguist.segment(sentence):
+            print type(word)
+            query = query_parser.parse_query(
+                word,
+                xapian.QueryParser.FLAG_AUTO_SYNONYMS
+            )
             query_list.append(query)
 
-        if len(query_list) == 1:
-            query = query_list[0]
-        else:
-            query = xapian.Query(xapian.Query.OP_AND, query_list)
+        final_query = xapian.Query(xapian.Query.OP_AND, query_list)
+        enquire.set_query(final_query)
 
-        enquire.set_query(query)
-        matches = enquire.get_mset(0, 10, None)
+        matches = enquire.get_mset(0, 30, None)
         print "%s matches found" % matches.get_matches_estimated()
 
         docids = []

@@ -84,6 +84,7 @@ if __name__ == "__main__":
             index(index_db, qid, title)
         if category == 'C':
             index_db.add_synonym("社会保险卡","社保卡")
+            index_db.add_synonym("社保卡", "社会保险卡")
             index_db.commit()
         else:
             index_db.commit()
