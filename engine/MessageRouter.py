@@ -50,7 +50,6 @@ class MessageRouter:
                     html += "</div>"
                 else:
                     for qid in question_ids:
-                        print type(qid)
                         query = "SELECT question FROM %s WHERE id=%i" % (cat, qid)
                         cursor.execute(query)
                         html += "<ul>"
@@ -80,7 +79,7 @@ class MessageRouter:
         # ====================================
         # segment
         elif code == '001':
-            return "| ".join(Linguist.segment(msg))
+            return "|".join(Linguist.segment(msg))
 
         # keywords extraction
         elif code == '002':

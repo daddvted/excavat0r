@@ -31,11 +31,13 @@ $(document).ready(function(){
         ws.send(msg);
     });
 
+    /*
     // 004 - extract keyword code
     $("#keyword_code_btn").click(function(){
         var msg = "004" + $("#input_txt").val();
         ws.send(msg);
     });
+    */
 
 
     // 007 - Spider

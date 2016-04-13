@@ -1,56 +1,61 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import json
+import codecs
 import os.path
+from itertools import product
 import mysql.connector
 import jieba
 import xapian
 
 
-# class Index:
-#     def __init__(self):
-#         print "init"
-#         self.file_path = os.path.dirname(os.path.abspath(__file__))
-#         self.base_path = os.path.dirname(self.file_path)
-#         jieba.load_userdict(os.path.join(self.base_path, "dat/self_idf.txt"))
-#
-#     @staticmethod
-#     def index(db, id, txt):
-#         doc = xapian.Document()
-#         for word in jieba.cut_for_search(txt):
-#             doc.add_term(word)
-#             key = ":%s" % id
-#             doc.add_term(key)
-#             db.replace_document(key, doc)
-#
-#     @staticmethod
-#     def commit_db(db):
-#         db.commit()
+class Index:
+    def __init__(self, category, idf="dat/self_idf.txt"):
+        # Build base path
+        py_path = os.path.dirname(os.path.abspath(__file__))
+        self.base_path = os.path.dirname(py_path)
 
-def init_self_dict():
-    file_path = os.path.dirname(os.path.abspath(__file__))
-    base_path = os.path.dirname(file_path)
-    jieba.load_userdict(os.path.join(base_path, "dat/self_idf.txt"))
+        # Load self dict
+        jieba.load_userdict(os.path.join(self.base_path, idf))
 
+        # Load synonyms
+        with codecs.open(os.path.join(self.base_path, "dat/synonym.json"), "r", "utf-8") as syn:
+            self.synonym = json.load(syn)
 
-def index(db, id, txt):
-    doc = xapian.Document()
-    for word in jieba.cut_for_search(txt):
-        doc.add_term(word)
-        key = ":%s" % id
-        doc.add_term(key)
-        db.replace_document(key, doc)
+        # Init xapian DB
+        idb = "dat/index/" + category
+        print idb
+        self.db = xapian.WritableDatabase(os.path.join(self.base_path, idb), xapian.DB_CREATE_OR_OPEN)
+
+    def index(self, qid, txt):
+        doc = xapian.Document()
+        for word in jieba.cut_for_search(txt):
+            doc.add_term(word)
+            key = ":%s" % qid
+            doc.add_term(key)
+            self.db.replace_document(key, doc)
+
+    def fill_synonym(self, category):
+        key_list = ["ALL", category]
+
+        for key in key_list:
+            for synonym_str in self.synonym[key]:
+                for syn_tuple in product(synonym_str.split('|'), repeat=2):
+                    if syn_tuple[0] != syn_tuple[1]:
+                        self.db.add_synonym(syn_tuple[0], syn_tuple[1])
+
+    def commit_db(self):
+        self.db.commit()
 
 
 if __name__ == "__main__":
-    init_self_dict()
 
     ####################################
     # A - 住房公积金
     # B - 出入境
     # C - 社保
     ####################################
-
     # category_list = ["A", "B", "C"]
     # category_list = ["A", "C"]
     category_list = ["C"]
@@ -63,31 +68,22 @@ if __name__ == "__main__":
         'database': 'ai1',
         'raise_on_warnings': True,
     }
-
     conn = mysql.connector.connect(**config)
     cursor = conn.cursor()
 
-    file_path = os.path.dirname(os.path.abspath(__file__))
-    base_path = os.path.dirname(file_path)
-
-    for category in category_list:
-        print "Indexing Category %s." % category
-        db_name = "dat/index/" + category
-        db_path = os.path.join(base_path, db_name)
-        index_db = xapian.WritableDatabase(db_path, xapian.DB_CREATE_OR_OPEN)
+    for cat in category_list:
+        print "Indexing Category %s." % cat
+        indexer = Index(cat)
 
         # changes this sql for different category
-        query = "SELECT id, question FROM  %s" % category
+        query = "SELECT id, question FROM  %s" % cat
         cursor.execute(query)
 
-        for qid, title in cursor:
-            index(index_db, qid, title)
-        if category == 'C':
-            index_db.add_synonym("社会保险卡","社保卡")
-            index_db.add_synonym("社保卡", "社会保险卡")
-            index_db.commit()
-        else:
-            index_db.commit()
+        for q_id, title in cursor:
+            indexer.index(q_id, title)
+
+        indexer.fill_synonym(cat)
+        indexer.commit_db()
 
     cursor.close()
     conn.close()

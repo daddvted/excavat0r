@@ -65,6 +65,10 @@ class Linguist:
             lang.append('otr')
         return lang
 
+    def extract_keyword(self, sentence):
+        jieba.analyse.set_idf_path(os.path.join(self.base_path, "dat/self_idf.txt"))
+        return jieba.analyse.extract_tags(sentence)
+
     # def get_bits(self, cat=None, attr_list=None):
     #     if len(attr_list):
     #         with codecs.open(os.path.join(self.base_path, "dat/matrix.json"), "r", "utf-8") as m:
@@ -109,8 +113,7 @@ class Linguist:
     #     else:  # To the end of this function
     #         return cat, tags
     def get_category(self, sentence):
-        jieba.analyse.set_idf_path(os.path.join(self.base_path, "dat/self_idf.txt"))
-        tags = jieba.analyse.extract_tags(sentence, topK=32)
+        tags = self.extract_keyword(sentence)
         cat = ""
         hit = 0
         for t in tags:
@@ -136,9 +139,8 @@ class Linguist:
         query_parser.set_database(index_db)
 
         query_list = []
-        print "Cut for search: ", "|".join(Linguist.segment(sentence))
-        for word in Linguist.segment(sentence):
-            print type(word)
+        print "Sentence keywords: ", "|".join(self.extract_keyword(sentence))
+        for word in self.extract_keyword(sentence):
             query = query_parser.parse_query(
                 word,
                 xapian.QueryParser.FLAG_AUTO_SYNONYMS
@@ -160,9 +162,6 @@ class Linguist:
     # ====================================
     #           Test function
     # ====================================
-    def extract_keyword(self, sentence):
-        jieba.analyse.set_idf_path(os.path.join(self.base_path, "dat/self_idf.txt"))
-        return jieba.analyse.extract_tags(sentence)
 
     @staticmethod
     def segment(sentence):
