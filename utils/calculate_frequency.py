@@ -8,6 +8,8 @@ from engine.Linguist import Linguist
 
 
 category_list = ["A", "C"]
+filter_list = ["j", "n", "nz", "v", "vn", "x"]
+word_length = 2
 
 config = {
     'user': 'root',
@@ -27,11 +29,14 @@ for category in category_list:
     cursor.execute(query)
     frequency = {}
     for result in cursor:
-        for r in result:  # result contains selected columns
-            r = r.strip()
-            words = pseg.cut(r)
+        for txt in result:  # result contains selected columns
+            txt = txt.strip()
+            words = pseg.cut(txt)
             for w, p in words:
-                new_key = "%s|%s" % (w, p)
+                # filter
+                if len(w) >= word_length and p in filter_list:
+                    new_key = "%s|%s" % (w, p)
+
                 if new_key in frequency:
                     frequency[new_key] += 1
                 else:
