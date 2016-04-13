@@ -24,7 +24,7 @@ for l in categories.values():
 
 # Then write filtered frequent word with weight 90
 for category in category_list:
-    filename = "filtered_frequency_%s.txt" % category
+    filename = "frequency_%s.txt" % category
     with codecs.open(filename, "r", "utf-8") as freq:
         for line in freq:
             line = line.strip()

@@ -15,7 +15,10 @@ class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
             (r"/", IndexHandler),
+            (r"/map", MapHandler),
+            (r"/json", JsonHandler),
             (r"/ws", WSHandler),
+
         ]
 
         settings = dict(

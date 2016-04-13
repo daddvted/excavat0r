@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import json
 import tornado.web
 import tornado.websocket
 from tornado.websocket import WebSocketClosedError
+from tornado.escape import json_decode
 
 from .MessageRouter import MessageRouter
 
@@ -11,6 +13,16 @@ from .MessageRouter import MessageRouter
 class IndexHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("index.html")
+
+
+class MapHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render("map.html")
+
+
+class JsonHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.write(json_decode('{hello:"world"}'))
 
 
 class WSHandler(tornado.websocket.WebSocketHandler):

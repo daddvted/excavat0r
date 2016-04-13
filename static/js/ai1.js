@@ -13,41 +13,21 @@ $(document).ready(function(){
         ws.send(msg);
     });
 
-    // 001 - segment
+    // 901 - segment
     $("#segment_btn").click(function(){
-        var msg = "001" + $("#input_txt").val();
+        var msg = "901" + $("#input_txt").val();
         ws.send(msg);
     });
 
-    // 002 - extract keyword
+    // 902 - extract keyword
     $("#keyword_btn").click(function(){
-        var msg = "002" + $("#input_txt").val();
+        var msg = "902" + $("#input_txt").val();
         ws.send(msg);
     });
 
-    // 003 - Word flag
+    // 903 - Word flag
     $("#flag_btn").click(function(){
-        var msg = "003" + $("#input_txt").val();
-        ws.send(msg);
-    });
-
-    /*
-    // 004 - extract keyword code
-    $("#keyword_code_btn").click(function(){
-        var msg = "004" + $("#input_txt").val();
-        ws.send(msg);
-    });
-    */
-
-
-    // 007 - Spider
-    $("spider_btn").click(function(){
-        var msg = "007" + $("#input_txt").val();
-        ws.send(msg)
-    });
-    // 009 - echo
-    $("#echo_btn").click(function(){
-        var msg = "009" + $("#input_txt").val();
+        var msg = "903" + $("#input_txt").val();
         ws.send(msg);
     });
 
@@ -55,12 +35,16 @@ $(document).ready(function(){
 
     ws.onmessage = function(event){
         $("#result").html("");
+        alert(event.data)
         var content = $("<p>[Server] "+ event.data + "</p>");
         content.appendTo("#result");
     }
     ws.onerror = function(event){
         var err = $("<p>[Client] Lose connection</p>");
         err.appendTo("#result");
+    }
+
+    function setmap() {
     }
 
 });// document
