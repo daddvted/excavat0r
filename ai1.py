@@ -15,10 +15,8 @@ class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
             (r"/", IndexHandler),
-            (r"/map", MapHandler),
-            (r"/json", JsonHandler),
+            # (r"/ai1", AI1Handler),
             (r"/ws", WSHandler),
-
         ]
 
         settings = dict(
@@ -26,7 +24,7 @@ class Application(tornado.web.Application):
                 static_path=os.path.join(os.path.dirname(__file__), "static"),
                 data_path=os.path.join(os.path.dirname(__file__), "dat"),
                 xsrf_cookies=True,
-                cookie_secret="__WITH_GREATE_POWER_COMES_WITH_GREATE_RESPONSIBILITY__",
+                cookie_secret="__WITH_GREAT_POWER_COMES_WITH_GREAT_RESPONSIBILITY__",
                 debug=True,
                 autoreload=True,
         )

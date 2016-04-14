@@ -26,22 +26,20 @@ class Waiter:
             now = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
         return now
 
-    def get_answer_html(self, category, qid_list):
-        html="<div>"
+    def get_answer(self, category, qid_list):
+        answer_list = []
 
         if len(qid_list) == 1:
             query = "SELECT answer FROM %s WHERE id=%i" % (category, qid_list[0])
             self.cursor.execute(query)
             for result in self.cursor:
-                html += result[0]
-            html += "</div>"
+                answer_list.append(result[0])
         else:
             for qid in qid_list:
                 query = "SELECT question FROM %s WHERE id=%i" % (category, qid)
                 self.cursor.execute(query)
-                html += "<ul>"
                 for result in self.cursor:
                     html += '<li><a href="#">%s</a></li>' % result[0]
                 html += "</ul></div>"
 
-        return html
+        return answer_list

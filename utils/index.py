@@ -37,13 +37,16 @@ class Index:
             self.db.replace_document(key, doc)
 
     def fill_synonym(self, category):
-        key_list = ["ALL", category]
-
-        for key in key_list:
-            for synonym_str in self.synonym[key]:
+        if category in self.synonym:
+            for synonym_str in self.synonym[category]:
                 for syn_tuple in product(synonym_str.split('|'), repeat=2):
                     if syn_tuple[0] != syn_tuple[1]:
                         self.db.add_synonym(syn_tuple[0], syn_tuple[1])
+
+        for synonym_str in self.synonym["ALL"]:
+            for syn_tuple in product(synonym_str.split('|'), repeat=2):
+                if syn_tuple[0] != syn_tuple[1]:
+                    self.db.add_synonym(syn_tuple[0], syn_tuple[1])
 
     def commit_db(self):
         self.db.commit()
@@ -56,8 +59,8 @@ if __name__ == "__main__":
     # C - 社保
     ####################################
     # category_list = ["A", "B", "C"]
-    # category_list = ["A", "C"]
-    category_list = ["C"]
+    category_list = ["A", "C"]
+    # category_list = ["C"]
 
     config = {
         'user': 'root',

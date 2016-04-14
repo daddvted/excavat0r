@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import json
 from .Linguist import Linguist
 from .Robot import Robot
 from .SpiderMan import SpiderMan
@@ -16,7 +17,10 @@ class MessageRouter:
 
         # init db connection
 
-    def routing(self, code, msg):
+    # Receive dict and return dict
+    def routing(self, message):
+        code = message["code"]
+        msg = message["msg"]
         # ====================================
         #              Fake AI
         # ====================================
@@ -27,26 +31,35 @@ class MessageRouter:
                 return self.waiter.get_answer_html(cat, question_ids)
 
             else:
-                return "I don't understand :/"
+                return {"type": "999", "resp": "What did you said ?"}
 
         # ====================================
         #               Debug
         # ====================================
         # segment
         elif code == '901':
-            return "|".join(Linguist.segment(msg))
+            result = {"type": code, "resp": Linguist.segment(msg)}
+            # return json.dumps(result)  # JSON formatted str
+            return result
 
         # keywords extraction
         elif code == '902':
-            return "|".join(self.linguist.extract_keyword(msg))
-            # return "|".join(Linguist.extract_keyword(msg))
+            result = {"type": code, "resp": self.linguist.extract_keyword(msg)}
+            return result
 
         # word flag
         elif code == '903':
             flags = Linguist.tag(msg)
-            html = "<ul>"
+            resp_list = []
             for word, flag in flags:
-                html += "<li>" + word + ":" + flag + "</li>"
-            html += "</ul>"
-            return html
+                resp_list.append({
+                    "word": word,
+                    "flag": flag,
+                })
+
+            result = {
+                "type": code,
+                "resp": resp_list
+            }
+            return result
 

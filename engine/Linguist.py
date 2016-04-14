@@ -67,7 +67,7 @@ class Linguist:
 
     def extract_keyword(self, sentence):
         jieba.analyse.set_idf_path(os.path.join(self.base_path, "dat/self_idf.txt"))
-        return jieba.analyse.extract_tags(sentence)
+        return "|".join(jieba.analyse.extract_tags(sentence))
 
     # def get_bits(self, cat=None, attr_list=None):
     #     if len(attr_list):
@@ -163,10 +163,10 @@ class Linguist:
     #           Test function
     # ====================================
 
+    # Return segmented list
     @staticmethod
     def segment(sentence):
-        # segment_result = jieba.cut(sentence, cut_all=True)
-        return jieba.cut(sentence, cut_all=False)
+        return "|".join(jieba.cut(sentence, cut_all=False))
 
     @staticmethod
     def tag(sentence):
