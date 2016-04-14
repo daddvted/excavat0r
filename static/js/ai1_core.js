@@ -16,15 +16,18 @@ $(document).ready(function(){
 
     function parseResult(json) {
         alert(JSON.stringify(json));
-        var type = json.type
+        var type = json.type;
+        var html = "";
         if(type == "999" || type == "901" || type == "902"){
-            var html = "<p>" + json.resp + "</p>"
-            $(html).appendTo("#result")
+            html = "<p>" + json.resp + "</p>";
+            $(html).appendTo("#result");
         } else if(type == "903") {
+            html = "<div><ul>"
             $.each(json.resp, function(n, item){
-                alert(item.word + " | " + item.flag);
-
+                html += "<li>" + item.word+ " | " + item.flag + "</li>";
             });
+            html += "</ul></div>";
+            $(html).appendTo("#result");
         }
 
     }

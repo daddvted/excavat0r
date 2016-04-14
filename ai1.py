@@ -15,15 +15,17 @@ class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
             (r"/", IndexHandler),
-            # (r"/ai1", AI1Handler),
+            (r"/ai1", AI1Handler),
             (r"/ws", WSHandler),
         ]
 
         settings = dict(
+                default_handler_class=DefaultHandler,
                 template_path=os.path.join(os.path.dirname(__file__), "templates"),
                 static_path=os.path.join(os.path.dirname(__file__), "static"),
                 data_path=os.path.join(os.path.dirname(__file__), "dat"),
-                xsrf_cookies=True,
+                xsrf_cookies=False,
+                # xsrf_cookies=True,
                 cookie_secret="__WITH_GREAT_POWER_COMES_WITH_GREAT_RESPONSIBILITY__",
                 debug=True,
                 autoreload=True,

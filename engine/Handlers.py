@@ -1,14 +1,19 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import json
 import tornado.web
 import tornado.websocket
 from tornado.websocket import WebSocketClosedError
+from tornado.web import MissingArgumentError
 from tornado.escape import json_decode
 from tornado.escape import json_encode
 
 from .MessageRouter import MessageRouter
+
+
+class DefaultHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.write("shit 404")
 
 
 class IndexHandler(tornado.web.RequestHandler):
@@ -16,16 +21,34 @@ class IndexHandler(tornado.web.RequestHandler):
         self.render("index.html")
 
 
-# class AI1Handler(tornado.web.RequestHandler):
-#     router = MessageRouter()
-#
-#     def get(self):
-#         msg = self.get_argument("m")
-#         print msg
-#         d = {
-#             "hello": msg
-#         }
-#         self.write(json_encode(d))
+class AI1Handler(tornado.web.RequestHandler):
+    router = MessageRouter()
+
+    def get(self):
+        self.http_handler()
+
+    def post(self):
+        self.http_handler()
+
+    def http_handler(self):
+        try:
+            message = self.get_argument("m")  # message is a dict
+            message = json_decode(message)
+            result = self.router.routing(message)  # result is also a dict
+            self.write(json_encode(result))
+
+        except MissingArgumentError:
+            self.return_except_err("MissingArgumentError")
+
+        except ValueError:
+            self.return_except_err("ArgumentValueError")
+
+    def return_except_err(self, str):
+        result = {
+            "type": "999",
+            "resp": str
+        }
+        self.write(json_encode(result))
 
 
 class WSHandler(tornado.websocket.WebSocketHandler):
@@ -47,7 +70,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     def on_message(self, message):
         message = json_decode(message)  # message is a dict
         print "In Handler.py ", message
-        result = self.router.routing(message)  # result is also dict
+        result = self.router.routing(message)  # result is also a dict
         self.send2client(json_encode(result))
 
     def on_close(self):

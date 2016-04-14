@@ -153,11 +153,11 @@ class Linguist:
         matches = enquire.get_mset(0, 30, None)
         print "%s matches found" % matches.get_matches_estimated()
 
-        docids = []
+        qid_list = []
         for m in matches:
-            docids.append(m.docid)
+            qid_list.append(m.docid)
 
-        return docids
+        return qid_list
 
     # ====================================
     #           Test function
