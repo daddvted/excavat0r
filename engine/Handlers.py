@@ -69,7 +69,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
     def on_message(self, message):
         message = json_decode(message)  # message is a dict
-        print "In Handler.py ", message
+        print "[ Handler.py - on_message() ]", message
         result = self.router.routing(message)  # result is also a dict
         self.send2client(json_encode(result))
 

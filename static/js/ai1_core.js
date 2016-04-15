@@ -15,20 +15,29 @@ $(document).ready(function(){
     }
 
     function parseResult(json) {
-        alert(JSON.stringify(json));
+        //alert(JSON.stringify(json));
         var type = json.type;
         var html = "";
-        if(type == "999" || type == "901" || type == "902"){
+        if(type == "000"){
+            html = "<div><ul>"
+            $.each(json.resp, function(n, item){
+                html += '<li><a href="#">' + item.content + '</a></li>'
+            });
+            html += "</ul></div>"
+
+        } else if(type == "999" || type == "901" || type == "902"){
             html = "<p>" + json.resp + "</p>";
-            $(html).appendTo("#result");
+
         } else if(type == "903") {
             html = "<div><ul>"
             $.each(json.resp, function(n, item){
                 html += "<li>" + item.word+ " | " + item.flag + "</li>";
             });
             html += "</ul></div>";
-            $(html).appendTo("#result");
         }
+
+        $(html).appendTo("#result");
+
 
     }
 
@@ -40,13 +49,12 @@ $(document).ready(function(){
         ws.send(JSON.stringify(message))
     }
 
-/*
-    function ajaxRequestode, msg) {
+    function ajaxRequest(code, msg) {
+
         var message = {
             'code': code,
             'msg': msg
         }
-
         $.ajax({
             url: "/ai1",
             type: "GET",
@@ -54,14 +62,14 @@ $(document).ready(function(){
             dataType: "json",
             beforeSend: function(){},
             success: function(data){
-                alert(data.hello)
+                alert("success");
+                parseResult(resp_json);
             },
             error: function(){
                 $("#result").html("Error happened : /")
             }
         });
     }
-*/
 
     //====================================
     // Click handler
@@ -78,9 +86,25 @@ $(document).ready(function(){
 
         if(code == "clear"){
             $("#result").html("")
+        } else if(code == "800") {
+            var map_html = '<div id="allmap" style="width: 500px; height: 400px;"></div>';
+            $(map_html).appendTo("#result");
+
+            var map = new BMap.Map("allmap");
+            map.centerAndZoom("成都", 15);
+            var top_right_navigation = new BMap.NavigationControl({
+                anchor: BMAP_ANCHOR_TOP_RIGHT,
+                type: BMAP_NAVIGATION_CONTROL_SMALL
+            });
+            map.addControl(top_right_navigation);
+            var local = new BMap.LocalSearch(map, {
+		        renderOptions:{map: map}
+	        });
+	        local.search(msg);
+
         } else {
-            send2server(code, msg)
-//            ajaxRequest(code, msg)
+            send2server(code, msg) // websocket
+//            ajaxRequest(code, msg) //ajax
         }
     });
 

@@ -67,7 +67,7 @@ class Linguist:
 
     def extract_keyword(self, sentence):
         jieba.analyse.set_idf_path(os.path.join(self.base_path, "dat/self_idf.txt"))
-        return "|".join(jieba.analyse.extract_tags(sentence))
+        return jieba.analyse.extract_tags(sentence)
 
     # def get_bits(self, cat=None, attr_list=None):
     #     if len(attr_list):
@@ -114,6 +114,7 @@ class Linguist:
     #         return cat, tags
     def get_category(self, sentence):
         tags = self.extract_keyword(sentence)
+        print "[ Linguist.py - get_category() ]", tags
         cat = ""
         hit = 0
         for t in tags:
@@ -130,7 +131,7 @@ class Linguist:
             return cat
 
     def seek(self, category, sentence):
-        print "Category: %s" % category
+        print "[ Linguist.py - seek() ]", "Category: %s" % category
         db_name = "dat/index/" + category
         db_path = os.path.join(self.base_path, db_name)
         index_db = xapian.WritableDatabase(db_path, xapian.DB_OPEN)
@@ -139,7 +140,7 @@ class Linguist:
         query_parser.set_database(index_db)
 
         query_list = []
-        print "Sentence keywords: ", "|".join(self.extract_keyword(sentence))
+        print "[ Linguist.py - seek() ]", "Sentence keywords: ", "|".join(self.extract_keyword(sentence))
         for word in self.extract_keyword(sentence):
             query = query_parser.parse_query(
                 word,
@@ -151,10 +152,11 @@ class Linguist:
         enquire.set_query(final_query)
 
         matches = enquire.get_mset(0, 30, None)
-        print "%s matches found" % matches.get_matches_estimated()
+        print "[ Linguist.py - seek() ]", "%s matches found" % matches.get_matches_estimated()
 
         qid_list = []
         for m in matches:
+            print m
             qid_list.append(m.docid)
 
         return qid_list
@@ -166,7 +168,7 @@ class Linguist:
     # Return segmented list
     @staticmethod
     def segment(sentence):
-        return "|".join(jieba.cut(sentence, cut_all=False))
+        return " | ".join(jieba.cut(sentence, cut_all=False))
 
     @staticmethod
     def tag(sentence):

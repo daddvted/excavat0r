@@ -65,7 +65,7 @@ if __name__ == "__main__":
     config = {
         'user': 'root',
         'password': 'hello',
-        'host': '192.168.1.26',
+        'host': '192.168.1.68',
         'port': '3306',
         'database': 'ai1',
         'raise_on_warnings': True,

@@ -27,9 +27,9 @@ class MessageRouter:
         if code == '000':
             cat = self.linguist.get_category(msg)
             if cat != "X":
-                question_ids = self.linguist.seek(cat, "".join(msg))
-                return self.waiter.get_answer_html(cat, question_ids)
-
+                question_ids = self.linguist.seek(cat, msg)
+                resp = self.waiter.get_answer(cat, question_ids)
+                return {"type": "000", "resp": resp}
             else:
                 return {"type": "999", "resp": "What did you said ?"}
 
@@ -44,7 +44,8 @@ class MessageRouter:
 
         # keywords extraction
         elif code == '902':
-            result = {"type": code, "resp": self.linguist.extract_keyword(msg)}
+            keyword_str = " | ".join(self.linguist.extract_keyword(msg))
+            result = {"type": code, "resp": keyword_str}
             return result
 
         # word flag
