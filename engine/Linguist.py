@@ -69,49 +69,6 @@ class Linguist:
         jieba.analyse.set_idf_path(os.path.join(self.base_path, "dat/self_idf.txt"))
         return jieba.analyse.extract_tags(sentence)
 
-    # def get_bits(self, cat=None, attr_list=None):
-    #     if len(attr_list):
-    #         with codecs.open(os.path.join(self.base_path, "dat/matrix.json"), "r", "utf-8") as m:
-    #             tmp = json.load(m)
-    #
-    #         matrix = tmp[cat]
-    #         bits = []
-    #         for attr in attr_list:
-    #             s = ""
-    #             for synonym in matrix:
-    #                 if attr in synonym:
-    #                     s = '1' + s
-    #                 else:
-    #                     s = '0' + s
-    #             bits.append(s)
-    #         final_bit = 0
-    #         for bit in bits:
-    #             final_bit |= int(bit, 2)
-    #
-    #         bits_id = bin(final_bit)[2:]  # bin(xxx) output '0b11011'
-    #         return bits_id
-    #     else:
-    #         return '0'
-
-    # def get_category(self, sentence):
-    #     jieba.analyse.set_idf_path(os.path.join(self.base_path, "dat/self_idf.txt"))
-    #     tags = jieba.analyse.extract_tags(sentence, topK=32)
-    #     cat = ""
-    #     hit = 0
-    #     for t in tags:
-    #         for k in self.categories.keys():
-    #             if t in self.categories[k]:
-    #                 cat = k
-    #                 hit = 1
-    #                 tags.remove(t)
-    #                 break
-    #         if hit:
-    #             break
-    #
-    #     if not hit:
-    #         return 'X', []
-    #     else:  # To the end of this function
-    #         return cat, tags
     def get_category(self, sentence):
         tags = self.extract_keyword(sentence)
         print "[ Linguist.py - get_category() ]", tags

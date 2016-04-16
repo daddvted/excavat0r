@@ -13,7 +13,7 @@ from .MessageRouter import MessageRouter
 
 class DefaultHandler(tornado.web.RequestHandler):
     def get(self):
-        self.write("shit 404")
+        self.write("Oops 404")
 
 
 class IndexHandler(tornado.web.RequestHandler):

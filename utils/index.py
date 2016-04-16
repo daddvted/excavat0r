@@ -25,7 +25,6 @@ class Index:
 
         # Init xapian DB
         idb = "dat/index/" + category
-        print idb
         self.db = xapian.WritableDatabase(os.path.join(self.base_path, idb), xapian.DB_CREATE_OR_OPEN)
 
     def index(self, qid, txt):

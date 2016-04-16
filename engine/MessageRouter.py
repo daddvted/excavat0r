@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import json
 from .Linguist import Linguist
 from .Robot import Robot
 from .SpiderMan import SpiderMan
@@ -14,6 +13,7 @@ class MessageRouter:
         self.waiter = Waiter()
         self.spiderman = SpiderMan()
         self.linguist = Linguist()
+        self.category = ["A", "B", "C"]
 
         # init db connection
 
@@ -26,12 +26,13 @@ class MessageRouter:
         # ====================================
         if code == '000':
             cat = self.linguist.get_category(msg)
-            if cat != "X":
+            # if cat != "X":
+            if cat in self.category:
                 question_ids = self.linguist.seek(cat, msg)
                 resp = self.waiter.get_answer(cat, question_ids)
                 return {"type": "000", "resp": resp}
             else:
-                return {"type": "999", "resp": "What did you said ?"}
+                return {"type": "999", "resp": "What did you say ?"}
 
         # ====================================
         #               Debug
