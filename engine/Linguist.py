@@ -6,7 +6,7 @@ import codecs
 import os.path
 
 import jieba.analyse
-import jieba.posseg as pseg
+import jieba.posseg
 import xapian
 
 
@@ -129,4 +129,4 @@ class Linguist:
 
     @staticmethod
     def tag(sentence):
-        return pseg.cut(sentence)
+        return jieba.posseg.cut(sentence)

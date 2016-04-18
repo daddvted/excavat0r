@@ -1,16 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import json
+import nltk
 
-d = {
-    "type": "903",
-    "msg": [
-        ("a", "A"),
-        ("b", "B"),
-        ("c", "C"),
-    ]
-}
+text = "大王叫我来巡山"
 
-print json.dumps(d)
+print nltk.word_tokenize(text)
+
 
