@@ -11,13 +11,14 @@ import xapian
 
 
 class Index:
-    def __init__(self, category, idf="dat/self_idf.txt"):
+    def __init__(self, category):
+    # def __init__(self, category, idf="dat/self_idf.txt"):
         # Build base path
         py_path = os.path.dirname(os.path.abspath(__file__))
         self.base_path = os.path.dirname(py_path)
 
         # Load self dict
-        jieba.load_userdict(os.path.join(self.base_path, idf))
+        # jieba.load_userdict(os.path.join(self.base_path, idf))
 
         # Load synonyms
         with codecs.open(os.path.join(self.base_path, "dat/synonym.json"), "r", "utf-8") as syn:
@@ -40,11 +41,14 @@ class Index:
             for synonym_str in self.synonym[category]:
                 for syn_tuple in product(synonym_str.split('|'), repeat=2):
                     if syn_tuple[0] != syn_tuple[1]:
+                        print "%s, %s" % (syn_tuple[0], syn_tuple[1])
                         self.db.add_synonym(syn_tuple[0], syn_tuple[1])
 
         for synonym_str in self.synonym["ALL"]:
+            print "ALL"
             for syn_tuple in product(synonym_str.split('|'), repeat=2):
                 if syn_tuple[0] != syn_tuple[1]:
+                    print "%s, %s" % (syn_tuple[0], syn_tuple[1])
                     self.db.add_synonym(syn_tuple[0], syn_tuple[1])
 
     def commit_db(self):

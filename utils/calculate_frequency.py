@@ -2,13 +2,13 @@
 from __future__ import unicode_literals
 import codecs
 import mysql.connector
-import jieba.posseg as pseg
+import jieba.posseg
 
 from engine.Linguist import Linguist
 
 
 category_list = ["A", "C"]
-filter_list = ["j", "n", "nz", "v", "vn", "x"]
+filter_list = ["j", "n", "nz", "ns", "v", "vn", "x"]
 word_length = 2
 
 config = {
@@ -31,7 +31,7 @@ for category in category_list:
     for result in cursor:
         for txt in result:  # result contains selected columns
             txt = txt.strip()
-            words = pseg.cut(txt)
+            words = jieba.posseg.cut(txt)
             for w, p in words:
                 # filter
                 if len(w) >= word_length and p in filter_list:

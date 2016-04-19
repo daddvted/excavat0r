@@ -23,6 +23,8 @@ class Linguist:
         with codecs.open(os.path.join(self.base_path, "dat/categories.json"), "r", "utf-8") as c:
             self.categories = json.load(c)
 
+        self.tf_idf = jieba.analyse.TFIDF(os.path.join(self.base_path, "dat/self_idf.txt"))
+
     @staticmethod
     def _differentiate_char(uchar):
         flag = 4  # 0-cn, 1-en, 2-num, 3-other
@@ -65,29 +67,33 @@ class Linguist:
             lang.append('otr')
         return lang
 
-    def extract_keyword(self, sentence):
-        jieba.analyse.set_idf_path(os.path.join(self.base_path, "dat/self_idf.txt"))
-        return jieba.analyse.extract_tags(sentence)
+    def extract_keyword(self, sentence, num=10, weight=False):
+        return self.tf_idf.extract_tags(sentence, topK=num, withWeight=weight)
 
-    def get_category(self, sentence):
+    def filter_category(self, sentence):
         tags = self.extract_keyword(sentence)
-        print "[ Linguist.py - get_category() ]", tags
+        print type(tags)
+        print "[ Linguist.py - get_category() ]", "Original keyword: ", "|".join(tags)
         cat = ""
+        cat_key = ""
         hit = 0
         for t in tags:
             for k in self.categories.keys():
                 if t in self.categories[k]:
                     cat = k
+                    cat_key = t
+                    tags.remove(t)
                     hit = 1
                     break
             if hit:
                 break
         if not hit:
-            return 'X'
+            return 'X', "", []
         else:
-            return cat
+            return cat, cat_key, tags
 
-    def seek(self, category, sentence):
+    def seek(self, category, key_list):
+        # keyword_used = 4
         print "[ Linguist.py - seek() ]", "Category: %s" % category
         db_name = "dat/index/" + category
         db_path = os.path.join(self.base_path, db_name)
@@ -97,14 +103,17 @@ class Linguist:
         query_parser.set_database(index_db)
 
         query_list = []
-        print "[ Linguist.py - seek() ]", "Sentence keywords: ", "|".join(self.extract_keyword(sentence))
-        for word in self.extract_keyword(sentence):
+
+        print "[ Linguist.py - seek() ]", "keywords used for search: ", "|".join(key_list)
+
+        for word in key_list:
             query = query_parser.parse_query(
                 word,
                 xapian.QueryParser.FLAG_AUTO_SYNONYMS
             )
             query_list.append(query)
 
+        # final_query = xapian.Query(xapian.Query.OP_OR, query_list)
         final_query = xapian.Query(xapian.Query.OP_AND, query_list)
         enquire.set_query(final_query)
 
@@ -126,6 +135,10 @@ class Linguist:
     @staticmethod
     def segment(sentence):
         return " | ".join(jieba.cut(sentence, cut_all=False))
+
+    @staticmethod
+    def segment_for_search(sentence):
+        return " | ".join(jieba.cut_for_search(sentence))
 
     @staticmethod
     def tag(sentence):

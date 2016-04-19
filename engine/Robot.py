@@ -11,5 +11,4 @@ class Robot:
             self.chat = chat_dat.readlines()
 
     def jabber(self):
-        random.shuffle(self.chat)
-        return self.chat[0]
+        return random.choice(self.chat)

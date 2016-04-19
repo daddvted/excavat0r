@@ -78,7 +78,7 @@ for page_num in range(1, total_page):
         q_desc = r.find_all("span")[1].string
         answer = str(r.find("h4"))
         answer = re.sub(r'<h4>\s+', '<h4>', answer)
-        answer = re.sub(r'\s+<\/h4>', '</h4>', answer)
+        answer = re.sub(r'\s+</h4>', '</h4>', answer)
 
         insert_stmt = (
             "INSERT INTO exit_and_entry(question_title, question_desc,answer) VALUES(%s, %s, %s)"

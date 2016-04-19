@@ -19,20 +19,32 @@ class MessageRouter:
 
     # Receive dict and return dict
     def routing(self, message):
+        help_text = """
+        对不起, 在我的知识库里没有找到相关的回答<br/>
+        需要将您的问答提交给客服人员回答么? <a id="400" href="#">提交</a>
+        """
         code = message["code"]
         msg = message["msg"]
         # ====================================
         #              Fake AI
         # ====================================
         if code == '000':
-            cat = self.linguist.get_category(msg)
+            cat, cat_key, key_list = self.linguist.filter_category(msg)
             # if cat != "X":
             if cat in self.category:
-                question_ids = self.linguist.seek(cat, msg)
-                resp = self.waiter.get_answer(cat, question_ids)
-                return {"type": "000", "resp": resp}
+                question_ids = self.linguist.seek(cat, key_list)
+                if len(question_ids):
+                    resp = self.waiter.get_answer(cat, question_ids)
+                    return {"type": "000", "resp": resp}
+                else:
+                    return {"type": "001", "resp": help_text}
             else:
-                return {"type": "999", "resp": "What did you say ?"}
+                return {"type": "999", "resp": self.robot.jabber()}
+
+        elif code == '400':
+            self.waiter.commit_question(msg)
+            return {"type": "401", "resp": "提交成功, 请耐心等待"}
+
 
         # ====================================
         #               Debug
@@ -41,6 +53,10 @@ class MessageRouter:
         elif code == '901':
             result = {"type": code, "resp": Linguist.segment(msg)}
             # return json.dumps(result)  # JSON formatted str
+            return result
+        # segment for search
+        elif code == '904':
+            result = {"type": code, "resp": Linguist.segment_for_search(msg)}
             return result
 
         # keywords extraction
@@ -64,4 +80,3 @@ class MessageRouter:
                 "resp": resp_list
             }
             return result
-

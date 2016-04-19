@@ -33,6 +33,7 @@ class AI1Handler(tornado.web.RequestHandler):
     def http_handler(self):
         try:
             message = self.get_argument("m")  # message is a dict
+            print type(message)
             message = json_decode(message)
             result = self.router.routing(message)  # result is also a dict
             self.write(json_encode(result))
@@ -71,6 +72,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         message = json_decode(message)  # message is a dict
         print "[ Handler.py - on_message() ]", message
         result = self.router.routing(message)  # result is also a dict
+        print "fuck", type(result)
         self.send2client(json_encode(result))
 
     def on_close(self):

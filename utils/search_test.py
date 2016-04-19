@@ -4,7 +4,10 @@ from __future__ import unicode_literals
 import xapian
 
 # query_string = "社保卡"
-string = "社会|保险|保险卡|社会保险卡"
+# string = "社会|保险|保险卡|社会保险卡"
+# string = "成都|住房|公积金"
+# string = "公积金|利率|降低"
+string = "城镇职工|病床|家庭"
 
 db = xapian.WritableDatabase("../dat/index/C", xapian.DB_CREATE_OR_OPEN)
 enquire = xapian.Enquire(db)

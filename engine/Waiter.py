@@ -28,24 +28,40 @@ class Waiter:
         cursor = conn.cursor()
 
         answer_list = []
-        print len(qid_list)
+        print "[ Waiter.py - get_answer() ]", "question id", qid_list
 
-        if len(qid_list) == 1:
-            query = "SELECT answer FROM %s WHERE id=%i" % (category, qid_list[0])
+        # if len(qid_list) == 1:
+        #     query = "SELECT answer FROM %s WHERE id=%i" % (category, qid_list[0])
+        #     cursor.execute(query)
+        #     for result in cursor:
+        #         answer_list.append({
+        #             "qid": qid_list[0],
+        #             "content": result[0]
+        #         })
+        # else:
+        for qid in qid_list:
+            query = "SELECT question FROM %s WHERE id=%i" % (category, qid)
             cursor.execute(query)
             for result in cursor:
                 answer_list.append({
                     "qid": qid_list[0],
                     "content": result[0]
                 })
-        else:
-            for qid in qid_list:
-                query = "SELECT question FROM %s WHERE id=%i" % (category, qid)
-                cursor.execute(query)
-                for result in cursor:
-                    answer_list.append({
-                        "qid": qid_list[0],
-                        "content": result[0]
-                    })
 
+        cursor.close()
+        conn.close()
         return answer_list
+
+    def commit_question(self, question):
+        conn = mysql.connector.connect(**self.config)
+        cursor = conn.cursor()
+        insert_stmt = (
+            "INSERT INTO question2answer(question) VALUES(%s)"
+            # "INSERT INTO question2answer(question, question2) VALUES(%s,%s)"
+        )
+        data = (question,)
+        cursor.execute(insert_stmt, data)
+        conn.commit()
+
+        cursor.close()
+        conn.close()
