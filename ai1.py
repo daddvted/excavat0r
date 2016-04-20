@@ -15,7 +15,7 @@ class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
             (r"/", IndexHandler),
-            (r"/ai1", AI1Handler),
+            (r"/ai1", HTTPHandler),
             (r"/ws", WSHandler),
         ]
 

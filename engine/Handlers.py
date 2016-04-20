@@ -21,7 +21,7 @@ class IndexHandler(tornado.web.RequestHandler):
         self.render("index.html")
 
 
-class AI1Handler(tornado.web.RequestHandler):
+class HTTPHandler(tornado.web.RequestHandler):
     router = MessageRouter()
 
     def get(self):
@@ -32,9 +32,8 @@ class AI1Handler(tornado.web.RequestHandler):
 
     def http_handler(self):
         try:
-            message = self.get_argument("m")  # message is a dict
+            message = json_decode(self.request.body)
             print type(message)
-            message = json_decode(message)
             result = self.router.routing(message)  # result is also a dict
             self.write(json_encode(result))
 
