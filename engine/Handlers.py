@@ -13,7 +13,7 @@ from .MessageRouter import MessageRouter
 
 class DefaultHandler(tornado.web.RequestHandler):
     def get(self):
-        self.write("Oops 404")
+        self.write("oops 404")
 
 
 class IndexHandler(tornado.web.RequestHandler):
@@ -71,7 +71,6 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         message = json_decode(message)  # message is a dict
         print "[ Handler.py - on_message() ]", message
         result = self.router.routing(message)  # result is also a dict
-        print "fuck", type(result)
         self.send2client(json_encode(result))
 
     def on_close(self):

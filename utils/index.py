@@ -70,7 +70,7 @@ if __name__ == "__main__":
         'password': 'hello',
         'host': '192.168.1.68',
         'port': '3306',
-        'database': 'ai1',
+        'database': 'excavator',
         'raise_on_warnings': True,
     }
     conn = mysql.connector.connect(**config)

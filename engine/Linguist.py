@@ -8,6 +8,7 @@ import os.path
 import jieba.analyse
 import jieba.posseg
 import xapian
+import nltk
 
 
 class Linguist:
@@ -26,7 +27,7 @@ class Linguist:
         self.tf_idf = jieba.analyse.TFIDF(os.path.join(self.base_path, "dat/self_idf.txt"))
 
     @staticmethod
-    def _differentiate_char(uchar):
+    def differentiate_char(uchar):
         flag = 4  # 0-cn, 1-en, 2-num, 3-other
         if u'\u4e00' <= uchar <= u'\u9fa5':
             flag = 0
@@ -45,8 +46,8 @@ class Linguist:
         otr_flag = 0
 
         for word in sentence:
-            flag = self._differentiate_char(word)
-            # flag = Linguist._differentiate_char(word)
+            flag = self.differentiate_char(word)
+            # flag = Linguist.differentiate_char(word)
             if flag == 0:
                 chn_flag += 1
             elif flag == 1:
@@ -143,3 +144,32 @@ class Linguist:
     @staticmethod
     def tag(sentence):
         return jieba.posseg.cut(sentence)
+
+    def extract_spo(self, sentence):
+        jieba.load_userdict(os.path.join(self.base_path, "dat/self_idf.txt"))
+        pairs = jieba.posseg.cut(sentence)
+
+        prepared_sentence = []
+        for w, t in pairs:
+            prepared_sentence.append((w, t))
+
+        grammar = r"""
+            SUB:
+                {^<n|nr|r|x>+.*}
+            PRE:
+                {.*<v|vd|vg|vn>+.*}
+            OBJ:
+                {.*<n|nr|r|x>+$}
+        """
+        parser = nltk.RegexpParser(grammar)
+        result = parser.parse(prepared_sentence)
+        # result.draw()
+
+        extraction = {}
+        for r in result:
+            if isinstance(r, nltk.tree.Tree):
+                phrase = ""
+                for leaf in r.leaves():
+                    phrase += leaf[0]
+                extraction[r.label()] = phrase
+        return extraction

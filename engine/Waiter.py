@@ -8,10 +8,10 @@ class Waiter:
     config = {
         'user': 'root',
         'password': 'hello',
-        'host': '192.168.1.68',
-        # 'host': '192.168.110.222',
+        # 'host': '192.168.1.68',
+        'host': '192.168.86.86',
         'port': '3306',
-        'database': 'ai1',
+        'database': 'excavator',
         'raise_on_warnings': True,
     }
 

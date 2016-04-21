@@ -45,7 +45,6 @@ class MessageRouter:
             self.waiter.commit_question(msg)
             return {"type": "401", "resp": "提交成功, 请耐心等待"}
 
-
         # ====================================
         #               Debug
         # ====================================
@@ -64,7 +63,12 @@ class MessageRouter:
             keyword_str = " | ".join(self.linguist.extract_keyword(msg))
             result = {"type": code, "resp": keyword_str}
             return result
-
+        # extract SPO
+        elif code == '905':
+            extraction = self.linguist.extract_spo(msg)
+            result = {"type": code, "resp": extraction}
+            print "[ MessageRouter.py - routing() ]", result
+            return result
         # word flag
         elif code == '903':
             flags = Linguist.tag(msg)

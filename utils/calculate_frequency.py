@@ -16,7 +16,7 @@ config = {
     'password': 'hello',
     'host': '192.168.1.68',
     'port': '3306',
-    'database': 'ai1',
+    'database': 'excavator',
     'raise_on_warnings': True,
 }
 

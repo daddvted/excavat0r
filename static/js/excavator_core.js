@@ -5,6 +5,7 @@ $(document).ready(function(){
         // 901 - segment
         // 904 - segment for search
         // 902 - extract keyword
+        // 905 - extract SPO
         // 903 - Word flag
         // 400 - pass question to cs
         var code = $(this).attr("id");
@@ -14,7 +15,8 @@ $(document).ready(function(){
             $("#result").html("");
         } else if(code == "800") {
             var map_html = '<div id="allmap" style="width: 500px; height: 400px;"></div>';
-            $(map_html).appendTo("#result");
+            map_html += "<hr/>"
+            $(map_html).prependTo("#result");
 
             var map = new BMap.Map("allmap");
             map.centerAndZoom("成都", 15);
@@ -45,7 +47,7 @@ $(document).ready(function(){
 
     ws.onerror = function(event){
         var err = $("<p>Lose connection</p>");
-        err.appendTo("#result");
+        err.prependTo("#result");
     }// ws.onerror
 
 
@@ -71,9 +73,12 @@ $(document).ready(function(){
                 html += "<li>" + item.word+ " | " + item.flag + "</li>";
             });
             html += "</ul></div>";
+        } else if(type == "905") {
+            alert(JSON.stringify(json.resp));
         }
 
-        $(html).appendTo("#result");
+        html += "<hr/>"
+        $(html).prependTo("#result");
 
     } //parseResult()
 
