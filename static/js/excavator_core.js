@@ -74,7 +74,16 @@ $(document).ready(function(){
             });
             html += "</ul></div>";
         } else if(type == "905") {
-            alert(JSON.stringify(json.resp));
+//            alert(JSON.stringify(json.resp));
+//            $.each(json.resp, function(n, item){
+//                alert(JSON.stringify(item))
+//            });
+            html = "<div><ul>"
+            html += "<li>主: "+json.resp.SUB+"</li>"
+            html += "<li>谓: "+json.resp.PRE+"</li>"
+            html += "<li>宾: "+json.resp.OBJ+"</li>"
+            html += "<li>状: "+json.resp.ADV+"</li>"
+            html += "</ul></div>"
         }
 
         html += "<hr/>"
@@ -98,7 +107,7 @@ $(document).ready(function(){
             'msg': msg
         }
         $.ajax({
-            url: "/ai1",
+            url: "/api",
             type: "GET",
             data: {"m":JSON.stringify(message)},
             dataType: "json",

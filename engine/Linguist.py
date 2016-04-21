@@ -155,11 +155,13 @@ class Linguist:
 
         grammar = r"""
             SUB:
-                {^<n|nr|r|x>+.*}
+                {^<j|n|ng|nr|ns|nt|nz|r|x>+.*}
             PRE:
                 {.*<v|vd|vg|vn>+.*}
             OBJ:
-                {.*<n|nr|r|x>+$}
+                {.*<j|n|nr|x>+$}
+            ADV:
+                {.*<p|r>+}
         """
         parser = nltk.RegexpParser(grammar)
         result = parser.parse(prepared_sentence)
