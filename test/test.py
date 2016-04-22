@@ -1,13 +1,23 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-# import nltk
-# import jieba.posseg
+
+class Base:
+    def __init__(self):
+        self.hello = "world"
 
 
-saying = ['After', 'all', 'is', 'said', 'and', 'done', 'more', 'is', 'said', 'than', 'done']
-tokens = set(saying)
-print tokens
-tokens = sorted(tokens)
-print tokens
-print tokens[-2:]
+
+class Newone(Base):
+    def __init__(self):
+        self.name = "new one"
+        super(Newone, self).__init__()
+
+    def report(self):
+        print self.hello
+        print self.name
+
+
+
+n = Newone()
+n.report()

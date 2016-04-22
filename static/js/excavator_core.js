@@ -45,7 +45,7 @@ $(document).ready(function(){
         if(code == "000"){
             html = "<div><ul>";
             $.each(json.resp, function(n, item){
-                html += '<li><a href="#">' + item.content + '</a></li>';
+                html += '<li><a href="#">' + item.title+ '</a></li>';
             });
             html += "</ul></div>";
 

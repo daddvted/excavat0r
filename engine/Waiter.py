@@ -2,9 +2,12 @@
 from __future__ import unicode_literals
 from datetime import datetime
 import mysql.connector
+import os.path
+import xapian
 
 
 class Waiter:
+
     config = {
         'user': 'root',
         'password': 'hello',
@@ -15,6 +18,9 @@ class Waiter:
         'raise_on_warnings': True,
     }
 
+    def __init__(self):
+        super(Waiter, self).__init__()
+
     @staticmethod
     def get_time(lang="cn"):
         if lang == "cn":
@@ -23,29 +29,57 @@ class Waiter:
             now = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
         return now
 
-    def get_answer(self, category, qid_list):
+    def seek(self, category, keywords_left):
+        # keyword_used = 4
+        print "[ Waiter.py - seek() ]", "Category: %s" % category
+        db_name = "dat/index/" + category
+        db_path = os.path.join(self.base_path, db_name)
+        index_db = xapian.WritableDatabase(db_path, xapian.DB_OPEN)
+        enquire = xapian.Enquire(index_db)
+        query_parser = xapian.QueryParser()
+        query_parser.set_database(index_db)
+
+        query_list = []
+
+        print "[ Waiter.py - seek() ]", "keywords used for search: ", "|".join(keywords_left)
+
+        for word in keywords_left:
+            query = query_parser.parse_query(
+                word,
+                xapian.QueryParser.FLAG_AUTO_SYNONYMS
+            )
+            query_list.append(query)
+
+        # final_query = xapian.Query(xapian.Query.OP_OR, query_list)
+        final_query = xapian.Query(xapian.Query.OP_AND, query_list)
+        enquire.set_query(final_query)
+
+        matches = enquire.get_mset(0, 30, None)
+        print "[ TextMan.py - seek() ]", "%s matches found" % matches.get_matches_estimated()
+
+        qid_list = []
+        for m in matches:
+            print m
+            qid_list.append(m.docid)
+
+        return qid_list
+
+    def get_answer(self, category, keywords_left):
+        qid_list = self.seek(category, keywords_left)
+
         conn = mysql.connector.connect(**self.config)
         cursor = conn.cursor()
 
         answer_list = []
         print "[ Waiter.py - get_answer() ]", "question id", qid_list
 
-        # if len(qid_list) == 1:
-        #     query = "SELECT answer FROM %s WHERE id=%i" % (category, qid_list[0])
-        #     cursor.execute(query)
-        #     for result in cursor:
-        #         answer_list.append({
-        #             "qid": qid_list[0],
-        #             "content": result[0]
-        #         })
-        # else:
         for qid in qid_list:
             query = "SELECT question FROM %s WHERE id=%i" % (category, qid)
             cursor.execute(query)
             for result in cursor:
                 answer_list.append({
                     "qid": qid_list[0],
-                    "content": result[0]
+                    "title": result[0]
                 })
 
         cursor.close()

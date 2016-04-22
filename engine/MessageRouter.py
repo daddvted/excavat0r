@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from .Guesser import Guesser
+from .SemanticMan import SemanticMan
 from .TextMan import TextMan
 from .Robot import Robot
 from .SpiderMan import SpiderMan
@@ -14,7 +14,7 @@ class MessageRouter:
         self.waiter = Waiter()
         self.spiderman = SpiderMan()
         self.textman = TextMan()
-        self.guesser = Guesser()
+        self.semanticman = SemanticMan()
         self.categories = ["A", "B", "C"]
 
     # Receive dict and return dict
@@ -72,7 +72,7 @@ class MessageRouter:
         # extract SPO
         elif code == '905':
             response_code = "905"
-            response = self.guesser.extract_spo(msg)
+            response = self.semanticman.extract_spo(msg)
         # word flag
         elif code == '903':
             flags = TextMan.tag(msg)
