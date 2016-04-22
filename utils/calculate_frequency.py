@@ -4,7 +4,7 @@ import codecs
 import mysql.connector
 import jieba.posseg
 
-from engine.Linguist import Linguist
+from engine.TextMan import Linguist
 
 
 category_list = ["A", "C"]

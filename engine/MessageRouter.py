@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from .Linguist import Linguist
+from .Guesser import Guesser
+from .TextMan import TextMan
 from .Robot import Robot
 from .SpiderMan import SpiderMan
 from .Waiter import Waiter
@@ -12,10 +13,9 @@ class MessageRouter:
         self.robot = Robot()
         self.waiter = Waiter()
         self.spiderman = SpiderMan()
-        self.linguist = Linguist()
-        self.category = ["A", "B", "C"]
-
-        # init db connection
+        self.textman = TextMan()
+        self.guesser = Guesser()
+        self.categories = ["A", "B", "C"]
 
     # Receive dict and return dict
     def routing(self, message):
@@ -25,53 +25,57 @@ class MessageRouter:
         """
         code = message["code"]
         msg = message["msg"]
+
+        response_code = ""
+        response = None
+
         # ====================================
         #              Fake AI
         # ====================================
         if code == '000':
-            cat, cat_key, key_list = self.linguist.filter_category(msg)
+            category, category_key, keywords_left = self.textman.parse_category(msg)
             # if cat != "X":
-            if cat in self.category:
-                question_ids = self.linguist.seek(cat, key_list)
+            if category in self.categories:
+                question_ids = self.textman.seek(category, keywords_left)
                 if len(question_ids):
-                    resp = self.waiter.get_answer(cat, question_ids)
-                    return {"type": "000", "resp": resp}
+                    response_code = "000"
+                    response = self.waiter.get_answer(category, question_ids)
                 else:
-                    return {"type": "001", "resp": help_text}
+                    response_code = "001"
+                    response = help_text
             else:
-                return {"type": "999", "resp": self.robot.jabber()}
+                response_code = "999"
+                response = self.robot.jabber()
 
         elif code == '400':
             self.waiter.commit_question(msg)
-            return {"type": "401", "resp": "提交成功, 请耐心等待"}
+            response_code = "401"
+            response = "提交成功, 请耐心等待"
 
         # ====================================
         #               Debug
         # ====================================
         # segment
         elif code == '901':
-            result = {"type": code, "resp": Linguist.segment(msg)}
-            # return json.dumps(result)  # JSON formatted str
-            return result
+            response_code = "901"
+            response = TextMan.segment(msg)
         # segment for search
         elif code == '904':
-            result = {"type": code, "resp": Linguist.segment_for_search(msg)}
-            return result
+            response_code = "904"
+            response = TextMan.segment_for_search(msg)
 
         # keywords extraction
         elif code == '902':
-            keyword_str = " | ".join(self.linguist.extract_keyword(msg))
-            result = {"type": code, "resp": keyword_str}
-            return result
+            response_code = "902"
+            keyword_str = " | ".join(self.textman.extract_keyword(msg))
+            response = keyword_str
         # extract SPO
         elif code == '905':
-            extraction = self.linguist.extract_spo(msg)
-            result = {"type": code, "resp": extraction}
-            print "[ MessageRouter.py - routing() ]", result
-            return result
+            response_code = "905"
+            response = self.guesser.extract_spo(msg)
         # word flag
         elif code == '903':
-            flags = Linguist.tag(msg)
+            flags = TextMan.tag(msg)
             resp_list = []
             for word, flag in flags:
                 resp_list.append({
@@ -79,8 +83,8 @@ class MessageRouter:
                     "flag": flag,
                 })
 
-            result = {
-                "type": code,
-                "resp": resp_list
-            }
-            return result
+            response_code = "903"
+            response = resp_list
+
+        print "[ MessageRouter.py - routing()]", response_code, response
+        return {"code": response_code, "resp": response}

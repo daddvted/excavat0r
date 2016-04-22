@@ -33,7 +33,6 @@ class HTTPHandler(tornado.web.RequestHandler):
     def http_handler(self):
         try:
             message = json_decode(self.request.body)
-            print type(message)
             result = self.router.routing(message)  # result is also a dict
             self.write(json_encode(result))
 

@@ -1,4 +1,20 @@
 $(document).ready(function(){
+    var ws = new WebSocket("ws://localhost:8000/ws");
+
+    ws.onmessage = function(event){
+        var resp_json = $.parseJSON(event.data);
+        parseResult(resp_json);
+        setupClickListener();
+    } //ws.onmessage
+
+    ws.onerror = function(event){
+        var err = $("<p>Lose connection</p>");
+        err.prependTo("#result");
+    }// ws.onerror
+
+
+
+
 
     $("#menu li a").click(function(){
         // 000 - AI
@@ -40,27 +56,27 @@ $(document).ready(function(){
 
     function parseResult(json) {
         // alert(JSON.stringify(json));
-        var code = json.code;
+        var type = json.type;
         var html = "";
-        if(code == "000"){
+        if(type == "000"){
             html = "<div><ul>";
             $.each(json.resp, function(n, item){
                 html += '<li><a href="#">' + item.content + '</a></li>';
             });
             html += "</ul></div>";
 
-        } else if(code == "001" || code == "999" || code == "901" || code == "902" || code == "904"){
+        } else if(type == "001" || type == "999" || type == "901" || type == "902" || type == "904"){
             html = "<p>" + json.resp + "</p>";
-        } else if(code == "401") {
+        } else if(type == "401") {
             $("#result").html("");
             html = "<p>" + json.resp + "</p>";
-        } else if(code == "903") {
+        } else if(type == "903") {
             html = "<div><ul>";
             $.each(json.resp, function(n, item){
                 html += "<li>" + item.word+ " | " + item.flag + "</li>";
             });
             html += "</ul></div>";
-        } else if(code == "905") {
+        } else if(type == "905") {
 //            alert(JSON.stringify(json.resp));
 //            $.each(json.resp, function(n, item){
 //                alert(JSON.stringify(item))
@@ -87,27 +103,6 @@ $(document).ready(function(){
     } // send2server()
 
 
-    function ajaxRequest(code, msg) {
-
-        var message = {
-            "code": code,
-            "msg": msg
-        };
-        data = JSON.stringify(message);
-        $.ajax({
-            url: "/api",
-            type: "POST",
-            data: data,
-            dataType: "json",
-            beforeSend: function(){},
-            success: function(data){
-                parseResult(data);
-            },
-            error: function(){
-                $("#result").html("Error happened : /")
-            }
-        });
-    } //ajaxRequest()
 
     function setupClickListener() {
         $("#400").click(function(){
@@ -117,5 +112,7 @@ $(document).ready(function(){
             ajaxRequest(code, msg); //ajax
         });
     }
+
+
 
 });// document
