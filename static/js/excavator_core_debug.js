@@ -1,12 +1,34 @@
 $(document).ready(function(){
 
     $("#menu li a").click(function(){
-        // 000 - AI
+        // 901 - segment
+        // 904 - segment for search
+        // 902 - extract keyword
+        // 905 - extract SPO
+        // 903 - Word flag
+        // 400 - pass question to cs
         var code = $(this).attr("id");
         var msg = $("#message").val();
 
         if(code == "clear"){
             $("#result").html("");
+        } else if(code == "800") {
+            var map_html = '<div id="allmap" style="width: 500px; height: 400px;"></div>';
+            map_html += "<hr/>"
+            $(map_html).prependTo("#result");
+
+            var map = new BMap.Map("allmap");
+            map.centerAndZoom("成都", 15);
+            var top_right_navigation = new BMap.NavigationControl({
+                anchor: BMAP_ANCHOR_TOP_RIGHT,
+                type: BMAP_NAVIGATION_CONTROL_SMALL
+            });
+            map.addControl(top_right_navigation);
+            var local = new BMap.LocalSearch(map, {
+		        renderOptions:{map: map}
+	        });
+	        local.search(msg);
+
         } else {
             ajaxRequest(code, msg) //ajax
         }
@@ -18,14 +40,8 @@ $(document).ready(function(){
         // alert(JSON.stringify(json));
         var code = json.code;
         var html = "";
-        if(code == "000"){
-            html = "<div><ul>";
-            $.each(json.resp, function(n, item){
-                html += '<li><a href="#">' + item.title+ '</a></li>';
-            });
-            html += "</ul></div>";
 
-        } else if(code == "001" || code == "999" || code == "901" || code == "902" || code == "904"){
+        if(code == "999" || code == "901" || code == "902" || code == "904"){
             html = "<p>" + json.resp + "</p>";
         } else if(code == "401") {
             $("#result").html("");
@@ -76,14 +92,5 @@ $(document).ready(function(){
             }
         });
     } //ajaxRequest()
-
-    function setup400CLick() {
-        $("#400").click(function(){
-            var code = $(this).attr("id");
-            var msg = $("#message").val();
-            // send2server(code, msg); //WebSocket
-            ajaxRequest(code, msg); //ajax
-        });
-    }
 
 });// document

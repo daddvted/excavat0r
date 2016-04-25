@@ -15,8 +15,9 @@ class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
             (r"/", IndexHandler),
-            (r"/api", HTTPHandler),
-            (r"/ws", WSHandler),
+            (r"/debug", DebugHandler),
+            (r"/enquire", EnquireHandler),
+            (r"/feedback", FeedbackHandler),
         ]
 
         settings = dict(
