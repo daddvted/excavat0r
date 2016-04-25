@@ -67,7 +67,7 @@ class TextMan(Element):
 
     def parse_category(self, sentence):
         keywords_left = self.extract_keyword(sentence)
-        print "[ TextMan.py - get_category() ]", "Original keyword: ", "|".join(keywords_left)
+        print "[ TextMan.py - parse_category() ]", "Original keyword: ", "|".join(keywords_left)
         category = ""
         category_keyword = ""
         hit = 0

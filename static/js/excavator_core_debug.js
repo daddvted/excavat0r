@@ -37,7 +37,7 @@ $(document).ready(function(){
 
 
     function parseResult(json) {
-        // alert(JSON.stringify(json));
+        alert(JSON.stringify(json));
         var code = json.code;
         var html = "";
 
