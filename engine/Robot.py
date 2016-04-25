@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from .Element import Element
 import random
+from .Element import Element
 
 
 class Robot(Element):

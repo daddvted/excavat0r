@@ -17,62 +17,78 @@ class MessageRouter:
         self.semanticman = SemanticMan()
         self.categories = ["A", "B", "C"]
 
+        self.response_code = ""
+        self.response = None
+
+        self.help_text = """
+        对不起, 您提的问题我回答不了<br/>
+        需要将您的问题提交给客服人员回答么? <a id="400" href="#">提交</a>
+        """
+
     # Receive dict and return dict
     def routing(self, message):
-        help_text = """
-        对不起, 在我的知识库里没有找到相关的回答<br/>
-        需要将您的问答提交给客服人员回答么? <a id="400" href="#">提交</a>
-        """
         code = message["code"]
         msg = message["msg"]
-
-        response_code = ""
-        response = None
 
         # ====================================
         #              Fake AI
         # ====================================
         if code == '000':
+            # 1st, parse category of the sentence
             category, category_key, keywords_left = self.textman.parse_category(msg)
-            # if cat != "X":
-            if category in self.categories:
-                question_ids = self.textman.seek(category, keywords_left)
-                if len(question_ids):
-                    response_code = "000"
-                    response = self.waiter.get_answer(category, question_ids)
-                else:
-                    response_code = "001"
-                    response = help_text
-            else:
-                response_code = "999"
-                response = self.robot.jabber()
 
+            # Category in categories list(["A","B","C"])
+            if category in self.categories:
+
+                if len(keywords_left):
+                    # Answer returned without analyze user's sentence,
+                    # only using keyword extraction
+                    answer_list = self.waiter.get_answer(category, keywords_left)
+                    if len(answer_list):
+                        self.response_code = "000"
+                        self.response = answer_list
+                        return self._send_response()
+                    else:
+                        self._parse_sentence_step(category, msg)
+                        return self._send_response()
+                # No keywords_left
+                # user input single keyword like "社保"
+                else:
+                    self._single_keyword_step()
+
+            # Category is 'X', means the sentence is nonsense
+            else:
+                self.response_code = "999"
+                self.response = self.robot.jabber()
+                return self._send_response()
+
+        # Question can not be answered by ai, commit to CS
         elif code == '400':
             self.waiter.commit_question(msg)
-            response_code = "401"
-            response = "提交成功, 请耐心等待"
+            self.response_code = "401"
+            self.response = "提交成功, 请耐心等待"
+            return self._send_response()
 
         # ====================================
-        #               Debug
+        #               Debug(begin)
         # ====================================
         # segment
         elif code == '901':
-            response_code = "901"
-            response = TextMan.segment(msg)
+            self.response_code = "901"
+            self.response = TextMan.segment(msg)
         # segment for search
         elif code == '904':
-            response_code = "904"
-            response = TextMan.segment_for_search(msg)
+            self.response_code = "904"
+            self.response = TextMan.segment_for_search(msg)
 
         # keywords extraction
         elif code == '902':
-            response_code = "902"
-            keyword_str = " | ".join(self.textman.extract_keyword(msg))
-            response = keyword_str
-        # extract SPO
+            self.response_code = "902"
+            self.response = " | ".join(self.textman.extract_keyword(msg))
+        # extract sentence structure
         elif code == '905':
-            response_code = "905"
-            response = self.semanticman.extract_spo(msg)
+            self.response_code = "905"
+            self.response = self.semanticman.analyze_structure(msg)
         # word flag
         elif code == '903':
             flags = TextMan.tag(msg)
@@ -82,9 +98,31 @@ class MessageRouter:
                     "word": word,
                     "flag": flag,
                 })
+            self.response_code = "903"
+            self.response = resp_list
+            # ====================================
+            #               Debug(end)
+            # ====================================
 
-            response_code = "903"
-            response = resp_list
+    def _parse_sentence_step(self, category, sentence):
+        print "parsing sentence structure"
+        sentence_structure = self.semanticman.analyze_structure(sentence)
+        new_sentence = ""
+        new_sentence += "".join(sentence_structure['PRE'])
+        new_sentence += "".join(sentence_structure['OBJ'])
+        print "new_sentence in step_2a_analysis", new_sentence
+        new_keywords = self.textman.extract_keyword(new_sentence)
+        answer_list = self.waiter.get_answer(category, new_keywords)
+        if len(answer_list):
+            self.response_code = "000"
+            self.response = answer_list
+        else:
+            self.response_code = "001"
+            self.response = self.help_text
 
-        print "[ MessageRouter.py - routing()]", response_code, response
-        return {"code": response_code, "resp": response}
+    def _single_keyword_step(self):
+        print "Single keyword !!!"
+
+    def _send_response(self):
+        # print "[ MessageRouter.py - _send_response()]", response_code, response
+        return {"code": self.response_code, "resp": self.response}

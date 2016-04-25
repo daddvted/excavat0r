@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from .Element import Element
 
 import os.path
 import jieba
 import jieba.posseg
 import nltk
 
+from .Element import Element
+
 
 class SemanticMan(Element):
     def __init__(self):
         super(SemanticMan, self).__init__()
 
-    def extract_spo(self, sentence):
+    def analyze_structure(self, sentence):
         jieba.load_userdict(os.path.join(self.base_path, "dat/self_idf.txt"))
         pairs = jieba.posseg.cut(sentence)
 
@@ -34,11 +35,18 @@ class SemanticMan(Element):
         result = parser.parse(prepared_sentence)
         # result.draw()
 
-        extraction = {}
+        structure = {}
         for r in result:
             if isinstance(r, nltk.tree.Tree):
-                phrase = ""
+                # phrase = ""
+                phrase =[]
                 for leaf in r.leaves():
-                    phrase += leaf[0]
-                extraction[r.label()] = phrase
-        return extraction
+                    # phrase += leaf[0]
+                    phrase.append(leaf[0])
+                structure[r.label()] = phrase
+        return structure
+        # 'structure' looks like
+        # {
+        #   'SUB':["我"],
+        #   'PRE':["想","查询"],
+        #   'OBJ':["天气"],

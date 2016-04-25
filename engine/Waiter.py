@@ -5,8 +5,10 @@ import mysql.connector
 import os.path
 import xapian
 
+from .Element import Element
 
-class Waiter:
+
+class Waiter(Element):
 
     config = {
         'user': 'root',
@@ -29,9 +31,7 @@ class Waiter:
             now = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
         return now
 
-    def seek(self, category, keywords_left):
-        # keyword_used = 4
-        print "[ Waiter.py - seek() ]", "Category: %s" % category
+    def _search_index(self, category, keywords_left):
         db_name = "dat/index/" + category
         db_path = os.path.join(self.base_path, db_name)
         index_db = xapian.WritableDatabase(db_path, xapian.DB_OPEN)
@@ -41,7 +41,7 @@ class Waiter:
 
         query_list = []
 
-        print "[ Waiter.py - seek() ]", "keywords used for search: ", "|".join(keywords_left)
+        print "[ Waiter.py - _search_index() ]", "keywords used for search: ", "|".join(keywords_left)
 
         for word in keywords_left:
             query = query_parser.parse_query(
@@ -55,35 +55,34 @@ class Waiter:
         enquire.set_query(final_query)
 
         matches = enquire.get_mset(0, 30, None)
-        print "[ TextMan.py - seek() ]", "%s matches found" % matches.get_matches_estimated()
+        print "[ Waiter.py - _search_index() ]", "%s matches found" % matches.get_matches_estimated()
 
         qid_list = []
         for m in matches:
-            print m
             qid_list.append(m.docid)
 
         return qid_list
 
     def get_answer(self, category, keywords_left):
-        qid_list = self.seek(category, keywords_left)
+        answer_list = []
+        qid_list = self._search_index(category, keywords_left)
 
         conn = mysql.connector.connect(**self.config)
         cursor = conn.cursor()
 
-        answer_list = []
-        print "[ Waiter.py - get_answer() ]", "question id", qid_list
+        if len(qid_list):
+            for qid in qid_list:
+                query = "SELECT question FROM %s WHERE id=%i" % (category, qid)
+                cursor.execute(query)
+                for result in cursor:
+                    answer_list.append({
+                        "qid": qid_list[0],
+                        "title": result[0]
+                    })
 
-        for qid in qid_list:
-            query = "SELECT question FROM %s WHERE id=%i" % (category, qid)
-            cursor.execute(query)
-            for result in cursor:
-                answer_list.append({
-                    "qid": qid_list[0],
-                    "title": result[0]
-                })
+            cursor.close()
+            conn.close()
 
-        cursor.close()
-        conn.close()
         return answer_list
 
     def commit_question(self, question):

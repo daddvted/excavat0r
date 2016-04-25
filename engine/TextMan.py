@@ -4,17 +4,17 @@ from __future__ import unicode_literals
 import json
 import codecs
 import os.path
-
 import jieba.analyse
 import jieba.posseg
 
+from .Element import Element
 
-class TextMan:
+
+class TextMan(Element):
     categories = {}
 
     def __init__(self):
-        file_path = os.path.dirname(os.path.abspath(__file__))
-        self.base_path = os.path.dirname(file_path)
+        super(TextMan, self).__init__()
 
         jieba.load_userdict(os.path.join(self.base_path, "dat/self_idf.txt"))
 
@@ -67,7 +67,6 @@ class TextMan:
 
     def parse_category(self, sentence):
         keywords_left = self.extract_keyword(sentence)
-        print type(keywords_left)
         print "[ TextMan.py - get_category() ]", "Original keyword: ", "|".join(keywords_left)
         category = ""
         category_keyword = ""
