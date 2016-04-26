@@ -12,7 +12,7 @@ import xapian
 
 class Index:
     def __init__(self, category):
-    # def __init__(self, category, idf="dat/self_idf.txt"):
+        # def __init__(self, category, idf="dat/self_idf.txt"):
         # Build base path
         py_path = os.path.dirname(os.path.abspath(__file__))
         self.base_path = os.path.dirname(py_path)

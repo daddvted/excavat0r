@@ -16,12 +16,12 @@ class TextMan(Element):
     def __init__(self):
         super(TextMan, self).__init__()
 
-        jieba.load_userdict(os.path.join(self.base_path, "dat/self_idf.txt"))
+        jieba.load_userdict(os.path.join(self.base_path, self.dict_file))
 
-        with codecs.open(os.path.join(self.base_path, "dat/categories.json"), "r", "utf-8") as c:
+        with codecs.open(os.path.join(self.base_path, self.category_file), "r", "utf-8") as c:
             self.categories = json.load(c)
 
-        self.tf_idf = jieba.analyse.TFIDF(os.path.join(self.base_path, "dat/self_idf.txt"))
+        self.tf_idf = jieba.analyse.TFIDF(os.path.join(self.base_path, self.dict_file))
 
     @staticmethod
     def differentiate_char(uchar):

@@ -4,7 +4,7 @@ import codecs
 import mysql.connector
 import jieba.posseg
 
-from engine.TextMan import Linguist
+from engine.TextMan import TextMan
 
 
 category_list = ["A", "C"]
@@ -20,7 +20,7 @@ config = {
     'raise_on_warnings': True,
 }
 
-linguist = Linguist()
+textman = TextMan()
 conn = mysql.connector.connect(**config)
 cursor = conn.cursor()
 
@@ -45,7 +45,7 @@ for category in category_list:
     # remove none chn key
     for k in frequency.keys():
         new_key = k[0]
-        if 'chn' not in linguist.differentiate_lang(new_key):
+        if 'chn' not in textman.differentiate_lang(new_key):
             del(frequency[k])
 
     # Write to file

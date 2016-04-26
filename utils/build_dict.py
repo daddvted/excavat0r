@@ -11,7 +11,7 @@ categories = {}
 file_path = os.path.dirname(os.path.abspath(__file__))
 base_path = os.path.dirname(file_path)
 
-idf = codecs.open(os.path.join(base_path, "dat/self_idf.txt"), "w", "utf-8")
+idf = codecs.open(os.path.join(base_path, "dat/dict.txt"), "w", "utf-8")
 
 with codecs.open(os.path.join(base_path, "dat/categories.json"), "r", "utf-8") as c:
     categories = json.load(c)

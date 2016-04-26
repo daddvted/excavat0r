@@ -28,12 +28,12 @@ class EnquireHandler(tornado.web.RequestHandler):
     router = MessageRouter()
 
     def get(self):
-        self.http_handler()
+        self._process_http_method()
 
     def post(self):
-        self.http_handler()
+        self._process_http_method()
 
-    def http_handler(self):
+    def _process_http_method(self):
         try:
             message = json_decode(self.request.body)
             # Debug
@@ -49,14 +49,20 @@ class EnquireHandler(tornado.web.RequestHandler):
         except ValueError:
             self.return_except_err("ArgumentValueError")
 
-    def return_except_err(self, str):
+    def return_except_err(self, err):
         result = {
             "type": "999",
-            "resp": str
+            "resp": err
         }
         self.write(json_encode(result))
 
 
 class FeedbackHandler(tornado.web.RequestHandler):
+    def get(self):
+        pass
+    
     def post(self):
+        pass
+    
+    def _process_http_method(self):
         pass

@@ -1,23 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import re
 
 
-class Base:
-    def __init__(self):
-        self.hello = "world"
+text1 = "你在哪里"
+text2 = "你在那里"
+text3 = "你在里"
 
+if re.search(ur'哪里|那里', text3):
+    print "found"
+else:
+    print "not found"
 
-
-class Newone(Base):
-    def __init__(self):
-        self.name = "new one"
-        super(Newone, self).__init__()
-
-    def report(self):
-        print self.hello
-        print self.name
-
-
-
-n = Newone()
-n.report()

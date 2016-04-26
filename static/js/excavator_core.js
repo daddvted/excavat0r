@@ -7,18 +7,9 @@ $(document).ready(function(){
     $("#message").keyup(function(event){
         if(event.keyCode == 13) {
             var msg = $("#message").val();
-            ajaxRequest(msg)
+            ajaxRequest(msg, "enquire")
         }
     });
-
-    function setup400CLick() {
-        $("#400").click(function(){
-            var code = $(this).attr("id");
-            var msg = $("#message").val();
-            // send2server(code, msg); //WebSocket
-            ajaxRequest(code, msg); //ajax
-        });
-    }
 
     function ajaxRequest(msg) {
         var message = {
@@ -35,28 +26,53 @@ $(document).ready(function(){
                 parseResult(data);
             },
             error: function(){
-                $("#result").html("Error happened : /")
+                $("#result").html("Error :/")
             }
         });
     } //ajaxRequest()
 
+    function setupBaiduMap(kw) {
+        var map = new BMap.Map("allmap");
+        map.centerAndZoom("成都", 15);
+        var top_right_navigation = new BMap.NavigationControl({
+            anchor: BMAP_ANCHOR_TOP_RIGHT,
+            type: BMAP_NAVIGATION_CONTROL_SMALL
+        });
+        map.addControl(top_right_navigation);
+        var local = new BMap.LocalSearch(map, {
+            renderOptions:{map: map}
+	    });
+	    local.search(kw);
+    }
+
     function parseResult(json) {
-        alert(JSON.stringify(json));
+//        alert(JSON.stringify(json));
         var code = json.code;
-        var html = "";
         if(code == "000") {
-            html = "<div>为您找到以下问答:<ul>";
+            var html = "<div>为您找到以下问答:<ul>";
             $.each(json.resp, function(n, item){
                 html += '<li><a href="#">' + item.title+ '</a></li>';
             });
             html += "</ul></div>";
+            html += "<hr/>"
+            $(html).prependTo("#result");
+        } else if(code == "001" || code == "002") {
+            var map_html = ""
+            msg = json.resp.kw
+            if(code == "001") {
+                map_html = "<p>" + json.resp.text + "</p>"
+            }
+            map_html += '<div id="allmap" style="width: 500px; height: 400px;"></div>';
+            map_html += "<hr/>"
+            $(map_html).prependTo("#result");
+            setupBaiduMap(msg)
 
         } else if(code == "400" || code == "999") {
-            html = "<p>" + json.resp + "</p>";
+            var html = "<p>" + json.resp + "</p>";
+            html += "<hr/>"
+            $(html).prependTo("#result");
         }
 
-        html += "<hr/>"
-        $(html).prependTo("#result");
 
     } //parseResult()
 

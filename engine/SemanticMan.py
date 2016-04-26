@@ -14,7 +14,7 @@ class SemanticMan(Element):
         super(SemanticMan, self).__init__()
 
     def analyze_structure(self, sentence):
-        jieba.load_userdict(os.path.join(self.base_path, "dat/self_idf.txt"))
+        jieba.load_userdict(os.path.join(self.base_path, self.dict_file))
         pairs = jieba.posseg.cut(sentence)
 
         prepared_sentence = []
