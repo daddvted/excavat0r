@@ -79,7 +79,7 @@ $(document).ready(function(){
         };
         data = JSON.stringify(message);
         $.ajax({
-            url: "/enquire",
+            url: "/debug_enquire",
             type: "POST",
             data: data,
             dataType: "json",

@@ -7,21 +7,17 @@ from tornado.escape import json_decode
 from tornado.escape import json_encode
 
 from .MessageRouter import MessageRouter
+from .Debugger import Debugger
 
 
-class DefaultHandler(tornado.web.RequestHandler):
+class Default(tornado.web.RequestHandler):
     def get(self):
         self.write("oops 404")
 
 
-class IndexHandler(tornado.web.RequestHandler):
+class Enquire(tornado.web.RequestHandler):
     def get(self):
         self.render("index.html")
-
-
-class DebugHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.render("debug.html")
 
 
 class EnquireHandler(tornado.web.RequestHandler):
@@ -36,11 +32,7 @@ class EnquireHandler(tornado.web.RequestHandler):
     def _process_http_method(self):
         try:
             message = json_decode(self.request.body)
-            # Debug
-            if "code" in message:
-                result = self.router.debug_routing(message)
-            else:
-                result = self.router.routing(message)  # result is also a dict
+            result = self.router.routing(message)  # result is also a dict
             self.write(json_encode(result))
 
         except MissingArgumentError:
@@ -60,9 +52,29 @@ class EnquireHandler(tornado.web.RequestHandler):
 class FeedbackHandler(tornado.web.RequestHandler):
     def get(self):
         pass
-    
+
     def post(self):
         pass
-    
+
     def _process_http_method(self):
         pass
+
+
+class Debug(tornado.web.RequestHandler):
+    def get(self):
+        self.render("debug.html")
+
+
+class DebugHandler(tornado.web.RequestHandler):
+    debugger = Debugger()
+
+    def get(self):
+        self._process_http_method()
+
+    def post(self):
+        self._process_http_method()
+
+    def _process_http_method(self):
+        message = json_decode(self.request.body)
+        result = self.debugger.debug_routing(message)
+        self.write(json_encode(result))

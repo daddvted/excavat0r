@@ -14,14 +14,15 @@ define("port", default=8000, help="run on the given port", type=int)
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
-            (r"/", IndexHandler),
-            (r"/debug", DebugHandler),
+            (r"/", Enquire),
             (r"/enquire", EnquireHandler),
+            (r"/debug", Debug),
+            (r"/debug_enquire", DebugHandler),
             (r"/feedback", FeedbackHandler),
         ]
 
         settings = dict(
-                default_handler_class=DefaultHandler,
+                default_handler_class=Default,
                 template_path=os.path.join(os.path.dirname(__file__), "templates"),
                 static_path=os.path.join(os.path.dirname(__file__), "static"),
                 data_path=os.path.join(os.path.dirname(__file__), "dat"),
