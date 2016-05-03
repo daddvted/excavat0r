@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 # Spider for　成都市住房公积金管理中心－热点问题
-import time
-import mysql.connector
-import re
 import random
+
+import mysql.connector
 import requests
 from bs4 import BeautifulSoup
 
