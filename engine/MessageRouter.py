@@ -43,7 +43,7 @@ class MessageRouter:
     def routing(self, message):
         msg = message["msg"]
 
-        # Step 1: categorizing sentence
+        # Step 1: Categorizing sentence
         category, category_key, keywords_left = self.textman.parse_category(msg)
 
         # Step 2A: Category in categories list(["A","B","C"])
@@ -121,4 +121,3 @@ class MessageRouter:
     def _send_response(self):
         # print "[ MessageRouter.py - _send_response()]", response_code, response
         return {"code": self.response_code, "resp": self.response}
-

@@ -15,12 +15,12 @@ class Default(tornado.web.RequestHandler):
         self.write("oops 404")
 
 
-class Enquire(tornado.web.RequestHandler):
+class Ask(tornado.web.RequestHandler):
     def get(self):
         self.render("index.html")
 
 
-class EnquireHandler(tornado.web.RequestHandler):
+class AskHandler(tornado.web.RequestHandler):
     router = MessageRouter()
 
     def get(self):

@@ -15,8 +15,8 @@ define("port", default=8000, help="run on the given port", type=int)
 class WWW(tornado.web.Application):
     def __init__(self):
         handlers = [
-            (r"/", Enquire),
-            (r"/enquire", EnquireHandler),
+            (r"/", Ask),
+            (r"/enquire", AskHandler),
             (r"/debug", Debug),
             (r"/debug_enquire", DebugHandler),
             (r"/feedback", FeedbackHandler),

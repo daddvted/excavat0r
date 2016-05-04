@@ -25,8 +25,8 @@ class Index:
             self.synonym = json.load(syn)
 
         # Init xapian DB
-        idb = "dat/index/" + category
-        self.db = xapian.WritableDatabase(os.path.join(self.base_path, idb), xapian.DB_CREATE_OR_OPEN)
+        index_db_path = "dat/index/" + category
+        self.db = xapian.WritableDatabase(os.path.join(self.base_path, index_db_path), xapian.DB_CREATE_OR_OPEN)
 
     def index(self, qid, txt):
         doc = xapian.Document()
@@ -56,11 +56,11 @@ class Index:
 
 
 if __name__ == "__main__":
-    ####################################
+    # ====================================
     # A - 住房公积金
     # B - 出入境
     # C - 社保
-    ####################################
+    # ====================================
     # category_list = ["A", "B", "C"]
     category_list = ["A", "C"]
     # category_list = ["C"]
