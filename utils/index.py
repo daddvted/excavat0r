@@ -10,15 +10,11 @@ import jieba
 import xapian
 
 
-class Index:
+class Indexing:
     def __init__(self, category):
-        # def __init__(self, category, idf="dat/self_idf.txt"):
         # Build base path
-        py_path = os.path.dirname(os.path.abspath(__file__))
-        self.base_path = os.path.dirname(py_path)
-
-        # Load self dict
-        # jieba.load_userdict(os.path.join(self.base_path, idf))
+        self_path= os.path.dirname(os.path.abspath(__file__))
+        self.base_path = os.path.dirname(self_path)
 
         # Load synonyms
         with codecs.open(os.path.join(self.base_path, "dat/synonym.json"), "r", "utf-8") as syn:
@@ -78,7 +74,7 @@ if __name__ == "__main__":
 
     for cat in category_list:
         print "Indexing Category %s." % cat
-        indexer = Index(cat)
+        indexer = Indexing(cat)
 
         # changes this sql for different category
         query = "SELECT id, question FROM  %s" % cat
