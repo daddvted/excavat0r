@@ -17,7 +17,8 @@ class MessageRouter:
         self.textman = TextMan()
         self.spiderman = SpiderMan()
         self.semanticman = SemanticMan()
-        self.categories = ["A", "B", "C"]
+        # self.categories = ["A", "B", "C"]
+        self.categories = self.textman.service.keys()
 
         self.response_code = ""
         self.response = None
@@ -28,16 +29,8 @@ class MessageRouter:
         谢谢使用!
         """
 
-    @staticmethod
-    def _categorize(category):
-        if category == "A":
-            category_tuple = ["公积金", "公积金管理中心"]
-        elif category == "B":
-            category_tuple = ["出入境", "出入境管理局"]
-        elif category == "C":
-            category_tuple = ["社保", "社保局"]
-
-        return category_tuple
+    def _categorize(self, category):
+        return self.textman.service[category]["name"], self.textman.service[category]["site"]
 
     # Receive dict and return dict
     def routing(self, message):
@@ -45,8 +38,9 @@ class MessageRouter:
 
         # Step 1: Categorizing sentence
         category, category_key, keywords_left = self.textman.parse_category(msg)
+        print "routing", category, category_key, keywords_left
 
-        # Step 2A: Category in categories list(["A","B","C"])
+        # Step 2A: Category in self.categories
         if category in self.categories:
 
             # Step 3A: Keywords left after parse_category()
@@ -65,9 +59,8 @@ class MessageRouter:
                     # Step 5A: At this point, Check whether user is asking a place
                     if re.search(ur'哪里|那里', msg):
                         self.response_code = "002"
-                        kw = self._categorize(category)
-                        print "kw ", kw
-                        self.response = {"kw": kw[1]}
+                        _, site = self._categorize(category)
+                        self.response = {"site": site}
                         return self._send_response()
 
                     # Step 5B: Finally using _parse_sentence_step()
@@ -111,12 +104,12 @@ class MessageRouter:
     def _do_single_keyword(self, category, sentence):
         print "_single_keyword_step", category
 
-        param = self._categorize(category)
+        name, site = self._categorize(category)
         guess_text = """
         您在询问<span style="color: red;">%s</span>, 是想办理<b>%s</b>相关业务吗, 我为您找到<b>%s</b>的地图信息
-        """ % (sentence, param[0], param[1])
+        """ % (sentence, name, site)
         self.response_code = "001"
-        self.response = {"text": guess_text, "kw": param[1]}
+        self.response = {"text": guess_text, "kw": site}
 
     def _send_response(self):
         # print "[ MessageRouter.py - _send_response()]", response_code, response

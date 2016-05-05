@@ -13,7 +13,7 @@ base_path = os.path.dirname(file_path)
 
 idf = codecs.open(os.path.join(base_path, "dat/dict.txt"), "w", "utf-8")
 
-with codecs.open(os.path.join(base_path, "dat/categories.json"), "r", "utf-8") as c:
+with codecs.open(os.path.join(base_path, "dat/service.json"), "r", "utf-8") as c:
     categories = json.load(c)
 
 # Write category line first with weight 100

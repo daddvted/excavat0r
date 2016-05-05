@@ -58,7 +58,7 @@ $(document).ready(function(){
             $(html).prependTo("#result");
         } else if(code == "001" || code == "002") {
             var map_html = ""
-            msg = json.resp.kw
+            msg = json.resp.site
             if(code == "001") {
                 map_html = "<p>" + json.resp.text + "</p>"
             }

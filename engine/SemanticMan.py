@@ -39,7 +39,7 @@ class SemanticMan(Element):
         for r in result:
             if isinstance(r, nltk.tree.Tree):
                 # phrase = ""
-                phrase =[]
+                phrase = []
                 for leaf in r.leaves():
                     # phrase += leaf[0]
                     phrase.append(leaf[0])

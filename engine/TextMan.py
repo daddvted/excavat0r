@@ -11,15 +11,16 @@ from .Element import Element
 
 
 class TextMan(Element):
-    categories = {}
+    service = {}
 
     def __init__(self):
         super(TextMan, self).__init__()
 
         jieba.load_userdict(os.path.join(self.base_path, self.dict_file))
 
-        with codecs.open(os.path.join(self.base_path, self.category_file), "r", "utf-8") as c:
-            self.categories = json.load(c)
+        # with codecs.open(os.path.join(self.base_path, self.service_file), "r", "utf-8") as c:
+        #     self.service = json.load(c)
+        self.init_service()
 
         self.tf_idf = jieba.analyse.TFIDF(os.path.join(self.base_path, self.dict_file))
 
@@ -72,8 +73,10 @@ class TextMan(Element):
         category_keyword = ""
         hit = 0
         for t in keywords_left:
-            for k in self.categories.keys():
-                if t in self.categories[k]:
+            print t, "@@"
+            for k in self.service.keys():
+                print self.service[k]["kw"]
+                if t in self.service[k]["kw"]:
                     category = k
                     category_keyword = t
                     keywords_left.remove(t)
@@ -87,7 +90,7 @@ class TextMan(Element):
             return category, category_keyword, keywords_left
 
     # ====================================
-    #           Test function
+    #           Debug function
     # ====================================
 
     # Return segmented list

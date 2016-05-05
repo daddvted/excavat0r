@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import re
+
+import json
+import codecs
 
 
-text1 = "你在哪里"
-text2 = "你在那里"
-text3 = "你在里"
+service = {}
 
-if re.search(ur'哪里|那里', text3):
-    print "found"
-else:
-    print "not found"
+with codecs.open("../dat/service.json", "r", "utf-8") as srv:
+    service = json.load(srv)
+
+
+print service
 

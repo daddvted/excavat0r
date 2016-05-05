@@ -53,13 +53,12 @@ class Indexing:
 
 if __name__ == "__main__":
     # ====================================
-    # A - 住房公积金
-    # B - 出入境
-    # C - 社保
+    # FD - 住房公积金
+    # EE - 出入境
+    # SS - 社保
     # ====================================
-    # category_list = ["A", "B", "C"]
-    category_list = ["A", "C"]
-    # category_list = ["C"]
+    # service_list = ["FD", "EE", "SS"]
+    service_list = ["FD", "SS"]
 
     config = {
         'user': 'root',
@@ -72,7 +71,7 @@ if __name__ == "__main__":
     conn = mysql.connector.connect(**config)
     cursor = conn.cursor()
 
-    for cat in category_list:
+    for cat in service_list:
         print "Indexing Category %s." % cat
         indexer = Indexing(cat)
 
