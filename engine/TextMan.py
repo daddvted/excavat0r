@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import json
-import codecs
 import os.path
 import jieba.analyse
 import jieba.posseg
@@ -16,12 +14,9 @@ class TextMan(Element):
     def __init__(self):
         super(TextMan, self).__init__()
 
-        jieba.load_userdict(os.path.join(self.base_path, self.dict_file))
-
-        # with codecs.open(os.path.join(self.base_path, self.service_file), "r", "utf-8") as c:
-        #     self.service = json.load(c)
         self.init_service()
 
+        jieba.load_userdict(os.path.join(self.base_path, self.dict_file))
         self.tf_idf = jieba.analyse.TFIDF(os.path.join(self.base_path, self.dict_file))
 
     @staticmethod
