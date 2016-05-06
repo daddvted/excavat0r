@@ -30,7 +30,8 @@ class Indexing:
             doc.add_term(word)
             key = ":%s" % qid
             doc.add_term(key)
-            self.db.replace_document(key, doc)
+
+        self.db.replace_document(key, doc)
 
     def fill_synonym(self, category):
         if category in self.synonym:
