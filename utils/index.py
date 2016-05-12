@@ -9,12 +9,15 @@ import mysql.connector
 import jieba
 import xapian
 
+from engine.TextMan import TextMan
+
 
 class Indexing:
     def __init__(self, category):
         # Build base path
         self_path= os.path.dirname(os.path.abspath(__file__))
         self.base_path = os.path.dirname(self_path)
+        self.tm = TextMan()
 
         # Load synonyms
         with codecs.open(os.path.join(self.base_path, "dat/synonym.json"), "r", "utf-8") as syn:
@@ -25,10 +28,11 @@ class Indexing:
         self.db = xapian.WritableDatabase(os.path.join(self.base_path, index_db_path), xapian.DB_CREATE_OR_OPEN)
 
     def index(self, qid, txt):
+        txt = self.tm.filter_sentence(txt)
+        key = ":%s" % qid
         doc = xapian.Document()
         for word in jieba.cut_for_search(txt):
             doc.add_term(word)
-            key = ":%s" % qid
             doc.add_term(key)
 
         self.db.replace_document(key, doc)
@@ -59,7 +63,7 @@ if __name__ == "__main__":
     # SS - 社保
     # ====================================
     # service_list = ["FD", "EE", "SS"]
-    service_list = ["FD", "SS"]
+    service_list = ["FD", "SS", "EE"]
 
     config = {
         'user': 'root',
@@ -81,6 +85,7 @@ if __name__ == "__main__":
         cursor.execute(query)
 
         for q_id, title in cursor:
+            print title
             indexer.index(q_id, title)
 
         indexer.fill_synonym(cat)

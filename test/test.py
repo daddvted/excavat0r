@@ -1,15 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import json
-import codecs
+from engine.TextMan import TextMan
 
-
-service = {}
-
-with codecs.open("../dat/service.json", "r", "utf-8") as srv:
-    service = json.load(srv)
-
-
-print service
+sent = "今天天气不错, 我来办理社保?"
 

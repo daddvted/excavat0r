@@ -7,7 +7,7 @@ import jieba.posseg
 from engine.TextMan import TextMan
 
 
-category_list = ["A", "C"]
+service_list = ["FD", "SS"]
 filter_list = ["j", "n", "nz", "ns", "v", "vn", "x"]
 word_length = 2
 
@@ -24,8 +24,8 @@ textman = TextMan()
 conn = mysql.connector.connect(**config)
 cursor = conn.cursor()
 
-for category in category_list:
-    query = "SELECT question FROM %s" % category
+for service in service_list:
+    query = "SELECT question FROM %s" % service
     cursor.execute(query)
     frequency = {}
     for result in cursor:
@@ -50,7 +50,7 @@ for category in category_list:
 
     # Write to file
     sorted_list = sorted(frequency.items(), key=lambda x: x[1], reverse=True)
-    fh = codecs.open("frequency_%s.txt" % category, 'w', encoding='utf-8')
+    fh = codecs.open("frequency_%s.txt" % service, 'w', encoding='utf-8')
     for s in sorted_list:
         line = "%s|%s|%d\n" % (s[0][0], s[0][1], s[1])
         fh.write(line)

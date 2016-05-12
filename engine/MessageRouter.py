@@ -17,8 +17,7 @@ class MessageRouter:
         self.textman = TextMan()
         self.spiderman = SpiderMan()
         self.semanticman = SemanticMan()
-        # self.categories = ["A", "B", "C"]
-        self.categories = self.textman.service.keys()
+        self.services = self.textman.service.keys()  # ["FD", "SS", "EE"]
 
         self.response_code = ""
         self.response = None
@@ -29,25 +28,25 @@ class MessageRouter:
         谢谢使用!
         """
 
-    def _categorize(self, category):
-        return self.textman.service[category]["name"], self.textman.service[category]["site"]
+    def _categorize(self, service_type):
+        return self.textman.service[service_type]["name"], self.textman.service[service_type]["site"]
 
     # Receive dict and return dict
     def routing(self, message):
         msg = message["msg"]
 
-        # Step 1: Categorizing sentence
-        category, category_key, keywords_left = self.textman.parse_category(msg)
-        print "routing", category, category_key, keywords_left
+        # Step 1: Parse service type from sentence
+        service, keywords = self.textman.parse_service_type(msg)
+        print "[ MessageRouter - routing() ]", service
 
         # Step 2A: Category in self.categories
-        if category in self.categories:
+        if service in self.services:
 
             # Step 3A: Keywords left after parse_category()
-            if len(keywords_left):
-                # Answer returned without analyze user's sentence,
-                # only using keyword extraction
-                answer_list = self.waiter.get_answer(category, keywords_left)
+            if len(keywords):
+                # Return answer without analyze user's sentence,
+                # only using jieba.cut()
+                answer_list = self.waiter.get_answer(service, keywords)
 
                 # Step 4A: Find answer according to user's sentence
                 if len(answer_list):
@@ -59,19 +58,19 @@ class MessageRouter:
                     # Step 5A: At this point, Check whether user is asking a place
                     if re.search(ur'哪里|那里', msg):
                         self.response_code = "002"
-                        _, site = self._categorize(category)
+                        _, site = self._categorize(service)
                         self.response = {"site": site}
                         return self._send_response()
 
                     # Step 5B: Finally using _parse_sentence_step()
                     else:
-                        self._do_sentence_parsing(category, msg)
+                        self._do_sentence_parsing(service, msg)
                         return self._send_response()
 
             # Step 3B: No keyword left after parse_category().
             # Maybe the user input single keyword like "社保" or "公积金".
             else:
-                self._do_single_keyword(category, msg)
+                self._do_single_keyword(service, msg)
                 return self._send_response()
 
         # Step 2B: category is 'X', means the sentence is nonsense

@@ -1,4 +1,4 @@
-## 简单智能问答应用 [code: Excavator]
+## 简单智能问答API [code: Excavator]
 * 通过爬虫建立知识库
 * 简单分析用户的问题
 * 支持GET/POST/WebSocket请求方式

@@ -31,8 +31,8 @@ class Waiter(Element):
             now = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
         return now
 
-    def _search_index(self, category, keywords_left):
-        db_name = "dat/index/" + category
+    def _search_index(self, service, keywords):
+        db_name = "dat/index/" + service
         db_path = os.path.join(self.base_path, db_name)
         index_db = xapian.WritableDatabase(db_path, xapian.DB_OPEN)
         enquire = xapian.Enquire(index_db)
@@ -41,9 +41,9 @@ class Waiter(Element):
 
         query_list = []
 
-        print "[ Waiter.py - _search_index() ]", "keywords used for search: ", "|".join(keywords_left)
+        print "[ Waiter.py - _search_index() ]", "keywords used for search: ", "|".join(keywords)
 
-        for word in keywords_left:
+        for word in keywords:
             query = query_parser.parse_query(
                 word,
                 xapian.QueryParser.FLAG_AUTO_SYNONYMS
@@ -54,7 +54,7 @@ class Waiter(Element):
         final_query = xapian.Query(xapian.Query.OP_AND, query_list)
         enquire.set_query(final_query)
 
-        matches = enquire.get_mset(0, 30, None)
+        matches = enquire.get_mset(0, 10, None)
         print "[ Waiter.py - _search_index() ]", "%s matches found" % matches.get_matches_estimated()
 
         qid_list = []
@@ -63,16 +63,16 @@ class Waiter(Element):
 
         return qid_list
 
-    def get_answer(self, category, keywords_left):
+    def get_answer(self, service, keywords):
         answer_list = []
-        qid_list = self._search_index(category, keywords_left)
+        qid_list = self._search_index(service, keywords)
 
         conn = mysql.connector.connect(**self.config)
         cursor = conn.cursor()
 
         if len(qid_list):
             for qid in qid_list:
-                query = "SELECT question FROM %s WHERE id=%i" % (category, qid)
+                query = "SELECT question FROM %s WHERE id=%i" % (service, qid)
                 cursor.execute(query)
                 for result in cursor:
                     answer_list.append({

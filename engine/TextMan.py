@@ -19,7 +19,6 @@ class TextMan(Element):
         jieba.load_userdict(os.path.join(self.base_path, self.dict_file))
         self.tf_idf = jieba.analyse.TFIDF(os.path.join(self.base_path, self.dict_file))
 
-    @staticmethod
     def differentiate_char(uchar):
         flag = 3  # 0-cn, 1-en, 2-num, 3-other
         if u'\u4e00' <= uchar <= u'\u9fa5':
@@ -29,6 +28,14 @@ class TextMan(Element):
         elif u'\u0030' <= uchar <= u'\u0039':
             flag = 2
         return flag
+
+    def filter_sentence(self, sentence):
+        new_sentence = []
+        for char in sentence:
+            if self.differentiate_char(char) == 0:
+                new_sentence.append(char)
+
+        return "".join(new_sentence)
 
     def differentiate_lang(self, sentence):
         chn_flag = 0
@@ -59,30 +66,29 @@ class TextMan(Element):
         return lang
 
     def extract_keyword(self, sentence, num=10, weight=False):
+        # type: (object, object, object) -> object
         return self.tf_idf.extract_tags(sentence, topK=num, withWeight=weight)
 
-    def parse_category(self, sentence):
-        keywords_left = self.extract_keyword(sentence)
-        print "[ TextMan.py - parse_category() ]", "Original keyword: ", "|".join(keywords_left)
-        category = ""
-        category_keyword = ""
+    def parse_service_type(self, sentence):
+        sentence = self.filter_sentence(sentence)
+        keywords = self.extract_keyword(sentence)
+        keywords_cut = list(jieba.cut(sentence))
+        # keywords_cut = keywords
+        print "[ TextMan.py - parse_category() ]", "Original keyword: ", "|".join(keywords)
+        service_type = ""
         hit = 0
-        for t in keywords_left:
-            print t, "@@"
+        for word in keywords:
             for k in self.service.keys():
-                print self.service[k]["kw"]
-                if t in self.service[k]["kw"]:
-                    category = k
-                    category_keyword = t
-                    keywords_left.remove(t)
+                if word in self.service[k]["kw"]:
+                    service_type = k
                     hit = 1
                     break
             if hit:
                 break
         if not hit:
-            return 'X', "", []
+            return 'X', []
         else:
-            return category, category_keyword, keywords_left
+            return service_type, keywords_cut
 
     # ====================================
     #           Debug function
