@@ -62,12 +62,12 @@ def filter_sentence(sentence):
 
 
 class TextMan(Element):
-    service = {}
+    # service = {}
 
     def __init__(self):
         super(TextMan, self).__init__()
 
-        self.init_service()
+        self.init_service()  # Load "service.json" into service_dict
 
         jieba.load_userdict(os.path.join(self.base_path, self.dict_file))
         self.tf_idf = jieba.analyse.TFIDF(os.path.join(self.base_path, self.dict_file))
@@ -79,14 +79,14 @@ class TextMan(Element):
     def parse_service_type(self, sentence):
         sentence = filter_sentence(sentence)
         keywords = self.extract_keyword(sentence)
-        keywords_cut = list(jieba.cut(sentence))
+        words = list(jieba.cut(sentence))
         # keywords_cut = keywords
         print "[ TextMan.py - parse_category() ]", "Original keyword: ", "|".join(keywords)
         service_type = ""
         hit = 0
         for word in keywords:
-            for k in self.service.keys():
-                if word in self.service[k]["kw"]:
+            for k in self.service_dict.keys():
+                if word in self.service_dict[k]["kw"]:
                     service_type = k
                     hit = 1
                     break
@@ -95,7 +95,7 @@ class TextMan(Element):
         if not hit:
             return 'X', []
         else:
-            return service_type, keywords_cut
+            return service_type, words
 
     # ====================================
     #           Debug function

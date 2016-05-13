@@ -14,7 +14,7 @@ from engine.TextMan import filter_sentence
 
 
 class Indexing:
-    def __init__(self, category):
+    def __init__(self, service):
         # Build base path
         self_path= os.path.dirname(os.path.abspath(__file__))
         self.base_path = os.path.dirname(self_path)
@@ -25,22 +25,24 @@ class Indexing:
             self.synonym = json.load(syn)
 
         # Init xapian DB
-        index_db_path = "dat/index/" + category
+        index_db_path = "dat/index/" + service
         self.db = xapian.WritableDatabase(os.path.join(self.base_path, index_db_path), xapian.DB_CREATE_OR_OPEN)
 
     def index(self, qid, txt):
         txt = filter_sentence(txt)
-        key = str(qid)
+
+        # key = str(qid)
+        key = "Q%s"% qid
         doc = xapian.Document()
         for word in jieba.cut_for_search(txt):
             doc.add_term(word)
-            doc.add_term(key)
+        # doc.add_term(key)
 
         self.db.replace_document(key, doc)
 
-    def fill_synonym(self, category):
-        if category in self.synonym:
-            for synonym_str in self.synonym[category]:
+    def fill_synonym(self, service):
+        if service in self.synonym:
+            for synonym_str in self.synonym[service]:
                 for syn_tuple in product(synonym_str.split('|'), repeat=2):
                     if syn_tuple[0] != syn_tuple[1]:
                         print "%s, %s" % (syn_tuple[0], syn_tuple[1])
@@ -77,19 +79,18 @@ if __name__ == "__main__":
     conn = mysql.connector.connect(**config)
     cursor = conn.cursor()
 
-    for cat in service_list:
-        print "Indexing Category %s." % cat
-        indexer = Indexing(cat)
+    for srv in service_list:
+        print "Indexing Category %s." % srv
+        indexer = Indexing(srv)
 
         # changes this sql for different category
-        query = "SELECT id, question FROM  %s" % cat
+        query = "SELECT id, question FROM  %s" % srv
         cursor.execute(query)
 
         for q_id, title in cursor:
-            print title
             indexer.index(q_id, title)
 
-        indexer.fill_synonym(cat)
+        indexer.fill_synonym(srv)
         indexer.commit_db()
 
     cursor.close()

@@ -26,7 +26,6 @@ class API(tornado.web.RequestHandler):
     def get(self):
         try:
             message = {"msg": self.get_argument("msg")}
-            print "[ API - get() ]", message
             result = self.router.routing(message)  # result is also a dict
             self.write(json_encode(result))
 

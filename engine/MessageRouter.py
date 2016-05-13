@@ -17,7 +17,7 @@ class MessageRouter:
         self.textman = TextMan()
         self.spiderman = SpiderMan()
         self.semanticman = SemanticMan()
-        self.services = self.textman.service.keys()  # ["FD", "SS", "EE"]
+        self.services = self.textman.service_dict.keys()  # ["FD", "SS", "EE"]
 
         self.response_code = ""
         self.response = None
@@ -42,8 +42,8 @@ class MessageRouter:
         # Step 2A: Category in self.categories
         if service in self.services:
 
-            # Step 3A: Keywords left after parse_category()
-            if len(keywords):
+            # Step 3A: Check length of words after jieba.cut
+            if len(keywords) > 1:
                 # Return answer without analyze user's sentence,
                 # only using jieba.cut()
                 answer_list = self.waiter.get_answer(service, keywords)
@@ -56,24 +56,17 @@ class MessageRouter:
                 # Step 4B: Find no answer, ready to perform _parse_sentence_step()
                 else:
                     # Step 5A: At this point, Check whether user is asking a place
-                    if re.search(ur'哪里|那里', msg):
-                        self.response_code = "002"
-                        _, site = self._categorize(service)
-                        self.response = {"site": site}
-                        return self._send_response()
-
-                    # Step 5B: Finally using _parse_sentence_step()
-                    else:
                         self._do_sentence_parsing(service, msg)
                         return self._send_response()
 
             # Step 3B: No keyword left after parse_category().
             # Maybe the user input single keyword like "社保" or "公积金".
             else:
-                self._do_single_keyword(service, msg)
+                self._do_single_keyword(service)
                 return self._send_response()
 
-        # Step 2B: category is 'X', means the sentence is nonsense
+        # Step 2B: category is 'X',
+        # means the sentence is not the type of service question
         else:
             self.response_code = "999"
             self.response = self.robot.jabber()
@@ -100,15 +93,11 @@ class MessageRouter:
             self.response = self.help_text
             self.waiter.commit_question(sentence)
 
-    def _do_single_keyword(self, category, sentence):
-        print "_single_keyword_step", category
+    def _do_single_keyword(self, service):
+        print "_single_keyword_step", service
 
-        name, site = self._categorize(category)
-        guess_text = """
-        您在询问<span style="color: red;">%s</span>, 是想办理<b>%s</b>相关业务吗, 我为您找到<b>%s</b>的地图信息
-        """ % (sentence, name, site)
         self.response_code = "001"
-        self.response = {"text": guess_text, "kw": site}
+        self.response = self.textman.service_dict[service]["desc"]
 
     def _send_response(self):
         # print "[ MessageRouter.py - _send_response()]", response_code, response
