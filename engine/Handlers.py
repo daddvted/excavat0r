@@ -15,23 +15,18 @@ class Default(tornado.web.RequestHandler):
         self.write("oops 404")
 
 
-class Ask(tornado.web.RequestHandler):
-    def get(self):
-        self.render("index.html")
-
-
-class AskHandler(tornado.web.RequestHandler):
+class API(tornado.web.RequestHandler):
     router = MessageRouter()
 
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        # self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+        # self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+
     def get(self):
-        self._process_http_method()
-
-    def post(self):
-        self._process_http_method()
-
-    def _process_http_method(self):
         try:
-            message = json_decode(self.request.body)
+            message = {"msg": self.get_argument("msg")}
+            print "[ API - get() ]", message
             result = self.router.routing(message)  # result is also a dict
             self.write(json_encode(result))
 
@@ -49,7 +44,7 @@ class AskHandler(tornado.web.RequestHandler):
         self.write(json_encode(result))
 
 
-class FeedbackHandler(tornado.web.RequestHandler):
+class Feedback(tornado.web.RequestHandler):
     def get(self):
         pass
 
@@ -61,20 +56,13 @@ class FeedbackHandler(tornado.web.RequestHandler):
 
 
 class Debug(tornado.web.RequestHandler):
-    def get(self):
-        self.render("debug.html")
-
-
-class DebugHandler(tornado.web.RequestHandler):
     debugger = Debugger()
 
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+
     def get(self):
-        self._process_http_method()
+        message = {"code": self.get_argument("code"), "msg": self.get_argument("msg")}
 
-    def post(self):
-        self._process_http_method()
-
-    def _process_http_method(self):
-        message = json_decode(self.request.body)
         result = self.debugger.debug_routing(message)
         self.write(json_encode(result))

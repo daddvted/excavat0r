@@ -8,6 +8,59 @@ import jieba.posseg
 from .Element import Element
 
 
+def differentiate_char(uchar):
+    # 0 - chn
+    # 1 - eng
+    # 2 - num
+    # 3 - otr
+    flag = 3
+    if u'\u4e00' <= uchar <= u'\u9fa5':
+        flag = 0
+    elif u'\u0041' <= uchar <= u'\u005a' or u'\u0061' <= uchar <= u'\u007a':
+        flag = 1
+    elif u'\u0030' <= uchar <= u'\u0039':
+        flag = 2
+    return flag
+
+
+def differentiate_lang(sentence):
+    chn_flag = 0
+    eng_flag = 0
+    num_flag = 0
+    otr_flag = 0
+
+    for word in sentence:
+        flag = differentiate_char(word)
+        if flag == 0:
+            chn_flag += 1
+        elif flag == 1:
+            eng_flag += 1
+        elif flag == 2:
+            num_flag += 1
+        else:
+            otr_flag += 1
+
+    lang = []
+    if chn_flag > 0:
+        lang.append('chn')
+    if eng_flag > 0:
+        lang.append('eng')
+    if num_flag > 0:
+        lang.append('num')
+    if otr_flag > 0:
+        lang.append('otr')
+    return lang
+
+
+def filter_sentence(sentence):
+    new_sentence = []
+    for char in sentence:
+        if differentiate_char(char) == 0:
+            new_sentence.append(char)
+
+    return "".join(new_sentence)
+
+
 class TextMan(Element):
     service = {}
 
@@ -19,58 +72,12 @@ class TextMan(Element):
         jieba.load_userdict(os.path.join(self.base_path, self.dict_file))
         self.tf_idf = jieba.analyse.TFIDF(os.path.join(self.base_path, self.dict_file))
 
-    def differentiate_char(uchar):
-        flag = 3  # 0-cn, 1-en, 2-num, 3-other
-        if u'\u4e00' <= uchar <= u'\u9fa5':
-            flag = 0
-        elif u'\u0041' <= uchar <= u'\u005a' or u'\u0061' <= uchar <= u'\u007a':
-            flag = 1
-        elif u'\u0030' <= uchar <= u'\u0039':
-            flag = 2
-        return flag
-
-    def filter_sentence(self, sentence):
-        new_sentence = []
-        for char in sentence:
-            if self.differentiate_char(char) == 0:
-                new_sentence.append(char)
-
-        return "".join(new_sentence)
-
-    def differentiate_lang(self, sentence):
-        chn_flag = 0
-        eng_flag = 0
-        num_flag = 0
-        otr_flag = 0
-
-        for word in sentence:
-            flag = self.differentiate_char(word)
-            if flag == 0:
-                chn_flag += 1
-            elif flag == 1:
-                eng_flag += 1
-            elif flag == 2:
-                num_flag += 1
-            else:
-                otr_flag += 1
-
-        lang = []
-        if chn_flag > 0:
-            lang.append('chn')
-        if eng_flag > 0:
-            lang.append('eng')
-        if num_flag > 0:
-            lang.append('num')
-        if otr_flag > 0:
-            lang.append('otr')
-        return lang
-
     def extract_keyword(self, sentence, num=10, weight=False):
         # type: (object, object, object) -> object
         return self.tf_idf.extract_tags(sentence, topK=num, withWeight=weight)
 
     def parse_service_type(self, sentence):
-        sentence = self.filter_sentence(sentence)
+        sentence = filter_sentence(sentence)
         keywords = self.extract_keyword(sentence)
         keywords_cut = list(jieba.cut(sentence))
         # keywords_cut = keywords

@@ -5,16 +5,17 @@ import mysql.connector
 import jieba.posseg
 
 from engine.TextMan import TextMan
+from engine.TextMan import differentiate_lang
 
 
-service_list = ["FD", "SS"]
+service_list = ["SS"]
 filter_list = ["j", "n", "nz", "ns", "v", "vn", "x"]
 word_length = 2
 
 config = {
     'user': 'root',
     'password': 'hello',
-    'host': '192.168.1.68',
+    'host': '192.168.1.91',
     'port': '3306',
     'database': 'excavator',
     'raise_on_warnings': True,
@@ -45,7 +46,7 @@ for service in service_list:
     # remove none chn key
     for k in frequency.keys():
         new_key = k[0]
-        if 'chn' not in textman.differentiate_lang(new_key):
+        if 'chn' not in differentiate_lang(new_key):
             del(frequency[k])
 
     # Write to file

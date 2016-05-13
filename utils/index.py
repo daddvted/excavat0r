@@ -10,6 +10,7 @@ import jieba
 import xapian
 
 from engine.TextMan import TextMan
+from engine.TextMan import filter_sentence
 
 
 class Indexing:
@@ -28,8 +29,8 @@ class Indexing:
         self.db = xapian.WritableDatabase(os.path.join(self.base_path, index_db_path), xapian.DB_CREATE_OR_OPEN)
 
     def index(self, qid, txt):
-        txt = self.tm.filter_sentence(txt)
-        key = ":%s" % qid
+        txt = filter_sentence(txt)
+        key = str(qid)
         doc = xapian.Document()
         for word in jieba.cut_for_search(txt):
             doc.add_term(word)
@@ -63,12 +64,12 @@ if __name__ == "__main__":
     # SS - 社保
     # ====================================
     # service_list = ["FD", "EE", "SS"]
-    service_list = ["FD", "SS", "EE"]
+    service_list = ["FD", "SS"]
 
     config = {
         'user': 'root',
         'password': 'hello',
-        'host': '192.168.1.68',
+        'host': '192.168.1.91',
         'port': '3306',
         'database': 'excavator',
         'raise_on_warnings': True,

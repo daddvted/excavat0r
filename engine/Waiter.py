@@ -13,7 +13,7 @@ class Waiter(Element):
     config = {
         'user': 'root',
         'password': 'hello',
-        'host': '192.168.1.68',
+        'host': '192.168.1.91',
         # 'host': '192.168.86.86',
         'port': '3306',
         'database': 'excavator',
@@ -59,6 +59,7 @@ class Waiter(Element):
 
         qid_list = []
         for m in matches:
+            print m.docid
             qid_list.append(m.docid)
 
         return qid_list
@@ -76,7 +77,7 @@ class Waiter(Element):
                 cursor.execute(query)
                 for result in cursor:
                     answer_list.append({
-                        "qid": qid_list[0],
+                        "qid": qid,
                         "title": result[0]
                     })
 
