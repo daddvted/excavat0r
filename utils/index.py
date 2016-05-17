@@ -32,7 +32,7 @@ class Indexing:
         txt = filter_sentence(txt)
 
         # key = str(qid)
-        key = "Q%s"% qid
+        key = "%s" % qid
         doc = xapian.Document()
         for word in jieba.cut_for_search(txt):
             doc.add_term(word)

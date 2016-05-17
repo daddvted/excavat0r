@@ -59,7 +59,6 @@ class Waiter(Element):
 
         qid_list = []
         for m in matches:
-            print m.docid
             qid_list.append(m.docid)
 
         return qid_list
@@ -73,9 +72,11 @@ class Waiter(Element):
 
         if len(qid_list):
             for qid in qid_list:
+                print qid
                 query = "SELECT question FROM %s WHERE id=%i" % (service, qid)
                 cursor.execute(query)
                 for result in cursor:
+                    print result[0]
                     answer_list.append({
                         "qid": qid,
                         "title": result[0]
