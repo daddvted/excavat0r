@@ -36,7 +36,7 @@ class Indexing:
         doc = xapian.Document()
         for word in jieba.cut_for_search(txt):
             doc.add_term(word)
-        # doc.add_term(key)
+            doc.add_term(key)
 
         self.db.replace_document(key, doc)
 
