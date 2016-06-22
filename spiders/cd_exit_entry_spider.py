@@ -4,8 +4,8 @@ from __future__ import unicode_literals
 import time
 import mysql.connector
 import re
-import random
-import requests
+import randoms
+import request
 from bs4 import BeautifulSoup
 
 user_agents = [

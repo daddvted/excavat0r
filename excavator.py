@@ -1,12 +1,10 @@
-# -*- coding:utf-8 -*-
-from __future__ import unicode_literals
-
 import os
 from tornado.ioloop import IOLoop
 from tornado.httpserver import HTTPServer
 from tornado.options import define, options
 
 from engine.Handlers import *
+from engine.AirQuality import AirQualityHandler
 
 define("port", default=8000, help="run on the given port", type=int)
 
@@ -14,13 +12,12 @@ define("port", default=8000, help="run on the given port", type=int)
 class WWW(tornado.web.Application):
     def __init__(self):
         handlers = [
-            (r"/api", API),
-            (r"/feedback", Feedback),
-            (r"/debug", Debug)
+            (r"/", DebugHandler),
+            (r"/aq", AirQualityHandler)
         ]
 
         settings = dict(
-                default_handler_class=Default,
+                default_handler_class=DefaultHandler,
                 template_path=os.path.join(os.path.dirname(__file__), "templates"),
                 static_path=os.path.join(os.path.dirname(__file__), "static"),
                 data_path=os.path.join(os.path.dirname(__file__), "dat"),
