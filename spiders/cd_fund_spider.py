@@ -62,7 +62,7 @@ class CDFundSpider(SpiderMan):
         cursor = conn.cursor()
 
         for q in question_urls:
-            print "processing %s" % q
+            print("processing %s" % q
             self.http_headers["User-Agent"] = random.choice(self.user_agents)
             self.http_headers["host"] = self.host
             page = requests.get(q, headers=self.http_headers)

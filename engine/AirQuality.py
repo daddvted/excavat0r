@@ -42,7 +42,7 @@ class AirQualityHandler(Kernel):
             request = HTTPRequest(self.url, method="GET", headers=headers)
             response = yield browser.fetch(request)
             result = response.body
-            html = BeautifulSoup(result.decode(), "html5lib")
+            html = BeautifulSoup(result.decode(), "lxml")
             city_aqi_div = html.find("div", class_="CityAQI")
 
             main_index = city_aqi_div.find(id="ContentBody_AqiData").string
@@ -57,7 +57,7 @@ class AirQualityHandler(Kernel):
             aqi["aqi_level"] = aqi_level
             aqi["time"] = update_time
 
-            pollution_table = city_aqi_div.select("table tbody")[1]
+            pollution_table = city_aqi_div.find_all("tbody")[0]
             pollution_table_tr = pollution_table.find_all("tr")
 
             pollutions = []
