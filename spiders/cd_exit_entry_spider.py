@@ -4,8 +4,8 @@ from __future__ import unicode_literals
 import time
 import mysql.connector
 import re
-import randoms
-import request
+import random
+import requests
 from bs4 import BeautifulSoup
 
 user_agents = [
@@ -63,7 +63,7 @@ cnx = mysql.connector.connect(**config)
 cursor = cnx.cursor()
 
 for page_num in range(1, total_page):
-    print "Processing page %s" % page_num
+    print("Processing page %s" % page_num)
     time.sleep(3)
     url = "http://www.cdcrj.gov.cn/exitentry/zxkf_%s.htm" % (str(page_num))
     headers["User-Agent"] = random.choice(user_agents)
