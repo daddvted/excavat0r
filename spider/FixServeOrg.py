@@ -6,10 +6,9 @@ URL: http://www.cdfgj.gov.cn/WXZJ/FixServeOrg.aspx
 import requests
 import lxml.html
 import mysql.connector
-from spider.LarvaSpider import Larva
 
 
-class FixServeOrgSpider(Larva):
+class FixServeOrgSpider(object):
     config = {
         'user': 'root',
         'password': 'hello',
@@ -37,7 +36,6 @@ class FixServeOrgSpider(Larva):
               "contact, phone) VALUES ('{org_name}', '{service_type}', '{registered_capital}', '{manage_scope}'," \
               " '{level}', '{address}', '{contact}', '{phone}')"
         sql = template.format(**data)
-        print(sql)
         self.cursor.execute(sql)
         self.conn.commit()
 
