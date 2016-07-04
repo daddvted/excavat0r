@@ -1,6 +1,3 @@
-from __future__ import absolute_import, division, print_function, with_statement
-
-
 class Larva(object):
     USER_AGENTS = {
         "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:43.0) Gecko/20100101 Firefox/43.0",
