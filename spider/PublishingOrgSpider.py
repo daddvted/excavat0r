@@ -1,3 +1,7 @@
+"""
+国家新闻出版广电总局 - 出版物单位
+URL: http://www.gapp.gov.cn/zongshu/serviceSearchListbve.shtml
+"""
 # P(Press)P(Publication)R(Radio)F(Film)T(Television)
 # 中华人民共和国国家新闻出版广电总局, 出版单位爬虫
 

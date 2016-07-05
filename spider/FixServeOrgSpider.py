@@ -41,7 +41,7 @@ class FixServeOrgSpider(object):
 
     def crawl(self):
         for m in range(1, 4):
-            print("Processing page {0}".format(m))
+            print("====== Processing page {0} ======".format(m))
             event_target = "ID_ucFixServeOrg$UcOrgInfoQuery1$UcPager1$btnPage{0}".format(m)
             self.form_data["__EVENTTARGET"] = event_target
             browser = requests.post(self.url, data=self.form_data)
