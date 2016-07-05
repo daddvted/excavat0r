@@ -64,25 +64,6 @@ class FixServeOrgSpider(object):
             else:
                 print("Error when crawling page {0}".format(m))
 
-    # def crawl2(self, url):
-    #     browser = requests.get(url)
-    #     if browser.status_code == 200:
-    #         root = lxml.html.fromstring(browser.text)
-    #         data = {
-    #             "org_name": root.xpath('//*[@id="ID_ucOrgInfoShow_txtorgname"]')[0].text_content(),
-    #             "service_type": root.xpath('//*[@id="ID_ucOrgInfoShow_txtservetype"]')[0].text_content(),
-    #             "registered_capital": root.xpath('//*[@id="ID_ucOrgInfoShow_txtRegisteredCapital"]')[0].text_content(),
-    #             "manage_scope": root.xpath('//*[@id="ID_ucOrgInfoShow_txtManageScope"]')[0].text_content(),
-    #             "level": root.xpath('//*[@id="ID_ucOrgInfoShow_txtlevel"]')[0].text_content(),
-    #             "address": root.xpath('//*[@id="ID_ucOrgInfoShow_lbOrgAddress"]')[0].text_content(),
-    #             "contact": root.xpath('//*[@id="ID_ucOrgInfoShow_txtContactPerson"]')[0].text_content(),
-    #             "phone": root.xpath('//*[@id="ID_ucOrgInfoShow_txtContactTel"]')[0].text_content()
-    #         }
-    #         self.save2db(data)
-    #
-    #     else:
-    #         print("Error when crawling url: {0}".format(url))
-
 
 if __name__ == "__main__":
     spider = FixServeOrgSpider()
