@@ -32,6 +32,11 @@ class FixServeOrgSpider(object):
         }
 
     def save2db(self, data):
+        """
+        Change this template, refer to EnvProtectionStdSpider
+        Change this template, refer to EnvProtectionStdSpider
+        Change this template, refer to EnvProtectionStdSpider
+        """
         template = "INSERT INTO fix_serve_org(org_name, service_type, registered_capital, manage_scope, level, address, " \
               "contact, phone) VALUES ('{org_name}', '{service_type}', '{registered_capital}', '{manage_scope}'," \
               " '{level}', '{address}', '{contact}', '{phone}')"
