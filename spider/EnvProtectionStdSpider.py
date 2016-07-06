@@ -64,7 +64,6 @@ class EnvProtectionStdSpider(object):
                     }
                     self.save2db(data)
             else:
-                print(browser.status_code)
                 print("Error when crawling page {0}".format(m))
 
             time.sleep(random.randint(2, 6))

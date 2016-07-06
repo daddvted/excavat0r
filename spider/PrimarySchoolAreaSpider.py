@@ -8,7 +8,7 @@ import lxml.html
 import mysql.connector
 
 
-class FixServeOrgSpider(object):
+class PrimarySchoolAreaSpider(object):
     config = {
         'user': 'root',
         'password': 'hello',
@@ -30,10 +30,9 @@ class FixServeOrgSpider(object):
         Change this template, refer to EnvProtectionStdSpider
         Change this template, refer to EnvProtectionStdSpider
         """
-        template = "INSERT INTO issue_org(org_name, issue_type, province) " \
-                   "VALUES ('{org_name}', '{issue_type}', '{province}')"
-        sql = template.format(**data)
-        self.cursor.execute(sql)
+        template = "INSERT INTO primary_school_area(school_name, area, district) " \
+                   "VALUES (%(school_name)s, %(area)s, %(district)s)"
+        self.cursor.execute(template, data)
         self.conn.commit()
 
     def crawl(self):
@@ -42,32 +41,57 @@ class FixServeOrgSpider(object):
         browser.encoding = "utf-8"
 
         if browser.status_code == 200:
-            root = lxml.html.fromstring(browser.text)
+            # root = lxml.html.fromstring(browser.text)
+            fh = open("cd_primary_school.htm", 'r')
+            root = lxml.html.fromstring(fh.read())
             tables = root.xpath('//*[@class="article-content-ex"]/table')
             strongs = root.xpath('//*[@style="font-size: 24px;"]')
-            num = len(strongs)
-            for n in range(num):
-                district = strongs[n].text_content().strip()
-                trs = tables[n].xpath('.//tr')
-                for m in range(1, len(trs)):
-                    tds = trs[m].xpath('.//td')
-                    print(tds[1].text_content())
-                    print(tds[2].text_content())
-                    print(tds[3].text_content())
 
+            type1 = [0, 1, 3]
+            type2 = [2, 4, 5]
+            type3 = [6]
 
-                # print(district, ":", len(trs))
+            for t in type1:
+                district = strongs[t].text_content().strip()
+                trs = tables[t].xpath('.//tr')
+                for n in range(1, len(trs)):
+                    tds = trs[n].xpath('.//td')
+                    data = {
+                        "school_name": tds[2].text_content().strip(),
+                        "area": tds[3].text_content().strip(),
+                        "district": district
+                    }
+                    self.save2db(data)
 
+            for t in type2:
+                district = strongs[t].text_content().strip()
+                trs = tables[t].xpath('.//tr')
+                for n in range(1, len(trs)):
+                    tds = trs[n].xpath('.//td')
+                    data = {
+                        "school_name": tds[1].text_content().strip(),
+                        "area": tds[2].text_content().strip(),
+                        "district": district
+                    }
+                    self.save2db(data)
 
-
-
-
+            for t in type3:
+                district = strongs[t].text_content().strip()
+                trs = tables[t].xpath('.//tr')
+                for n in range(1, len(trs)):
+                    tds = trs[n].xpath('.//td')
+                    data = {
+                        "school_name": tds[0].text_content().strip(),
+                        "area": tds[5].text_content().strip(),
+                        "district": district
+                    }
+                    self.save2db(data)
         else:
             print("Error when crawling page {0}".format(1))
 
 
 if __name__ == "__main__":
-    spider = FixServeOrgSpider()
+    spider = PrimarySchoolAreaSpider()
     spider.crawl()
 
     spider.cursor.close()
