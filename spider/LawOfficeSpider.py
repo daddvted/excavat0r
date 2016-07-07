@@ -13,7 +13,7 @@ import mysql.connector
 from spider.LarvaSpider import Larva
 
 
-class EnvProtectionStdSpider(Larva):
+class LawOfficeSpider(Larva):
     config = {
         'user': 'root',
         'password': 'hello',
@@ -67,7 +67,7 @@ class EnvProtectionStdSpider(Larva):
 
 
 if __name__ == "__main__":
-    spider = EnvProtectionStdSpider()
+    spider = LawOfficeSpider()
     spider.crawl()
 
     spider.cursor.close()

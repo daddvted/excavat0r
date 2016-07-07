@@ -12,7 +12,7 @@ import mysql.connector
 from spider.LarvaSpider import Larva
 
 
-class EnvProtectionStdSpider(Larva):
+class LawyerSpider(Larva):
     config = {
         'user': 'root',
         'password': 'hello',
@@ -35,7 +35,7 @@ class EnvProtectionStdSpider(Larva):
         self.conn.commit()
 
     def crawl(self):
-        for m in range(29, 9500):
+        for m in range(1, 9500):
             print("====== Processing page {0} ======".format(m))
 
             headers = {
@@ -61,7 +61,7 @@ class EnvProtectionStdSpider(Larva):
 
 
 if __name__ == "__main__":
-    spider = EnvProtectionStdSpider()
+    spider = LawyerSpider()
     spider.crawl()
 
     spider.cursor.close()
