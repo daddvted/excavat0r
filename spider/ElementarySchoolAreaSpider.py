@@ -30,8 +30,8 @@ class ElementarySchoolAreaSpider(object):
         Change this template, refer to EnvProtectionStdSpider
         Change this template, refer to EnvProtectionStdSpider
         """
-        template = "INSERT INTO primary_school_area(school_name, area, district) " \
-                   "VALUES (%(school_name)s, %(area)s, %(district)s)"
+        template = "INSERT INTO primary_school_area(school, area, district) " \
+                   "VALUES (%(school)s, %(area)s, %(district)s)"
         self.cursor.execute(template, data)
         self.conn.commit()
 
@@ -57,7 +57,7 @@ class ElementarySchoolAreaSpider(object):
                 for n in range(1, len(trs)):
                     tds = trs[n].xpath('.//td')
                     data = {
-                        "school_name": tds[2].text_content().strip(),
+                        "school": tds[2].text_content().strip(),
                         "area": tds[3].text_content().strip(),
                         "district": district
                     }
@@ -69,7 +69,7 @@ class ElementarySchoolAreaSpider(object):
                 for n in range(1, len(trs)):
                     tds = trs[n].xpath('.//td')
                     data = {
-                        "school_name": tds[1].text_content().strip(),
+                        "school": tds[1].text_content().strip(),
                         "area": tds[2].text_content().strip(),
                         "district": district
                     }
@@ -81,7 +81,7 @@ class ElementarySchoolAreaSpider(object):
                 for n in range(1, len(trs)):
                     tds = trs[n].xpath('.//td')
                     data = {
-                        "school_name": tds[0].text_content().strip(),
+                        "school": tds[0].text_content().strip(),
                         "area": tds[5].text_content().strip(),
                         "district": district
                     }
