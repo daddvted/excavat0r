@@ -30,7 +30,7 @@ class ElementarySchoolAreaSpider(object):
         Change this template, refer to EnvProtectionStdSpider
         Change this template, refer to EnvProtectionStdSpider
         """
-        template = "INSERT INTO primary_school_area(school, area, district) " \
+        template = "INSERT INTO elementary_school_area(school, area, district) " \
                    "VALUES (%(school)s, %(area)s, %(district)s)"
         self.cursor.execute(template, data)
         self.conn.commit()
