@@ -8,7 +8,7 @@ import lxml.html
 import mysql.connector
 
 
-class PrimarySchoolAreaSpider(object):
+class ElementarySchoolAreaSpider(object):
     config = {
         'user': 'root',
         'password': 'hello',
@@ -91,7 +91,7 @@ class PrimarySchoolAreaSpider(object):
 
 
 if __name__ == "__main__":
-    spider = PrimarySchoolAreaSpider()
+    spider = ElementarySchoolAreaSpider()
     spider.crawl()
 
     spider.cursor.close()
