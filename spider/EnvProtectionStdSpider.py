@@ -37,7 +37,6 @@ class EnvProtectionStdSpider(object):
         template = ("INSERT INTO env_protection_std "
                     "(std_no, std_name, std_name_en, std_release_time, std_impl_time, std_digest, std_link) "
                     "VALUES (%(std_no)s, %(std_name)s, %(std_name_en)s, %(std_release_time)s, %(std_impl_time)s, %(std_digest)s, %(std_link)s)")
-        # sql = template.format(**data)
         self.cursor.execute(template, data)
         self.conn.commit()
 
