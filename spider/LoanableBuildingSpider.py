@@ -31,16 +31,16 @@ class LoanableBuildingSpider(object):
         self.cursor = self.conn.cursor()
 
     def save2db(self, data):
-        template = "INSERT INTO loanable_building(name, addr, developer, admin, type, update_month) " \
-                   "VALUES (%(name)s, %(addr)s, %(developer)s, %(admin)s, %(type)s, %(update_month)s)"
+        template = "INSERT INTO loanable_building(name, addr, developer, admin, type, update_month, year) " \
+                   "VALUES (%(name)s, %(addr)s, %(developer)s, %(admin)s, %(type)s, %(update_month)s, %(year)s)"
         self.cursor.execute(template, data)
         self.conn.commit()
 
     def crawl(self):
         print("====== Processing page {0} ======".format(1))
 
-        for link in self.url.values():
-            browser = requests.get(link)
+        for year in self.url.keys():
+            browser = requests.get(self.url[year])
 
             if browser.status_code == 200:
                 root = lxml.html.fromstring(browser.text)
@@ -51,9 +51,10 @@ class LoanableBuildingSpider(object):
                         "name": str(tds[1].text_content()),
                         "addr": str(tds[2].text_content()),
                         "developer": str(tds[3].text_content()),
-                        "admin": str(tds[4].text_content()),
+                        "admin": str(tds[4].text_content()).strip('\r'),
                         "type": str(tds[5].text_content()),
                         "update_month": str(tds[6].text_content()),
+                        "year": year
                     }
                     self.save2db(data)
 
