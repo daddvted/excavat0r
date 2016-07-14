@@ -1,14 +1,7 @@
+import re
 
-data = {
-    "name": "usa's apple",
-    "price": 3.5
-}
-
-template = "INSERT INTO fruit(name, price) VALUES({name}, {price})"
-
-a = ("hello"
-     "world")
-print(type(a))
-print(len(a))
+s = "共2页 第1页 总记录数：30，跳转到第"
 
 
+m = re.findall(r'(\d+)', s)
+print(m)
