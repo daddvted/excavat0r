@@ -1,6 +1,8 @@
 """
 A base class for spider
 """
+
+
 class Larva(object):
     USER_AGENTS = [
         "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:43.0) Gecko/20100101 Firefox/43.0",
