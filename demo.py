@@ -19,5 +19,6 @@ root = etree.fromstring(xml_doc)
 books = root.xpath('book')
 print(books)
 bks = root.xpath('//book')
-print(bks)
+title = bks[0].xpath('.//title')
+print(title[0].text)
 
