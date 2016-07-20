@@ -82,28 +82,35 @@ class NightWorkSpider(object):
             self.cookie = "ASP.NET_SessionId=" + session
 
             html = lxml.html.fromstring(browser.text)
-            page_div = html.xpath('//div[@id="Navigate_divPanel"]/span')
-            tmp = str(page_div[0].text_content())
-            match = re.findall(r'(\d+)', tmp)
-            self.total_page = int(match[0])
 
-            view_state_div = html.xpath('//input[@id="__VIEWSTATE"]')
-            self.__VIEWSTATE = view_state_div[0].attrib["value"]
-            event_valid_div = html.xpath('//input[@id="__EVENTVALIDATION"]')
-            self.__EVENTVALIDATION = event_valid_div[0].attrib["value"]
-            self.__EVENTTARGET = "Navigate$btnNavNext"
-
+            # Crawl urls of 1st page
             links = html.xpath('//table[@id="DgList"]/tr/td[2]/a')
             for link in links:
                 self.urls.append(self.BASE_URL + str(link.attrib["href"]))
 
-            self.crawl2()
+            page_div = html.xpath('//div[@id="Navigate_divPanel"]/span')
+            if len(page_div):
+                tmp = str(page_div[0].text_content())
+                match = re.findall(r'(\d+)', tmp)
+                self.total_page = int(match[0])
+
+                view_state_div = html.xpath('//input[@id="__VIEWSTATE"]')
+                self.__VIEWSTATE = view_state_div[0].attrib["value"]
+                event_valid_div = html.xpath('//input[@id="__EVENTVALIDATION"]')
+                self.__EVENTVALIDATION = event_valid_div[0].attrib["value"]
+                self.__EVENTTARGET = "Navigate$btnNavNext"
+
+                self.crawl_step2()
+
+            # Only 1 page, start final_crawl()
+            else:
+                self.final_crawl()
 
         else:
             print("Error while crawling page 1")
-            self.crawl2()
+            self.crawl_step2()
 
-    def crawl2(self):
+    def crawl_step2(self):
         for p in range(2, self.total_page + 1):
 
             data = {
@@ -161,7 +168,7 @@ class NightWorkSpider(object):
                 }
                 self.save2db(data)
             else:
-                print("Error while crawling url: {}".format(p))
+                print("Error while crawling url: {}".format(url))
 
 if __name__ == "__main__":
     spider = NightWorkSpider()
