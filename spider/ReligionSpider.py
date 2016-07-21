@@ -1,6 +1,6 @@
 """
-物理管理执业名册
-URL: http://zy.cdpma.cn/C_staffSearch/EnterPriseInfo.aspx
+宗教查询
+URL: http://www.cdmzzj.gov.cn/news.do?method=getTWebCoreArticlePageQuery&channelId=channelId201308271454054502532096
 """
 import re
 import sys
