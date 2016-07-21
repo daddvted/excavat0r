@@ -1,6 +1,8 @@
 """
 房地产企业
 URL: http://www.cdcc.gov.cn/webNew/aspx/EnterpriseLst.aspx?st=%B7%BF%B5%D8%B2%FA%C6%F3%D2%B5&sn=&sz=&page=
+抓取日期: 20160721
+该爬虫也可爬取该页面其它企业类别
 """
 import re
 import sys
