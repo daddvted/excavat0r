@@ -9,7 +9,6 @@ import random
 import requests
 import lxml.html
 import redis
-import mysql.connector
 from urllib.parse import urlencode
 
 
