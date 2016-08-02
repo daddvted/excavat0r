@@ -51,11 +51,21 @@ class HousingEnsuringProjSpider(object):
                 trs = root.xpath('//table[@id="ID_ucShowIHProjectList_UcNewsListPager1_listProject"]/tr')
                 for n in range(1, len(trs)):
                     tds = trs[n].xpath('.//td')
+
+                    td0 = tds[0].xpath('./a')[0].attrib
+                    project = td0["title"] if "title" in td0 else tds[0].text_content().strip()
+
+                    td2 = tds[2].xpath('./span')[0].attrib
+                    tp = td2["title"] if "title" in td2 else tds[2].text_content().strip()
+
+                    td3 = tds[3].xpath('./span')[0].attrib
+                    addr = td3["title"] if "title" in td3 else tds[3].text_content().strip()
+
                     data = {
-                        "project": tds[0].text_content().strip(),
+                        "project": project,
                         "area": tds[1].text_content().strip(),
-                        "type": tds[2].text_content().strip(),
-                        "addr": tds[3].text_content().strip(),
+                        "type": tp,
+                        "addr": addr,
                         "start_time": tds[4].text_content().strip(),
                         "completion_time": tds[5].text_content().strip(),
                         "status": tds[6].text_content().strip()
