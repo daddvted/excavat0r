@@ -1,24 +1,6 @@
-from lxml import etree
+import redis
 
-xml_doc = """
-<books>
-<book>
-  <title lang="eng">Harry Potter</title>
-  <price>29.99</price>
-</book>
-<book>
-  <title lang="eng">Learning XML</title>
-  <price>39.95</price>
-</book>
-</books>
-"""
+r = redis.StrictRedis(host="192.168.86.86", port=6379, db=0)
 
-
-root = etree.fromstring(xml_doc)
-
-books = root.xpath('book')
-print(books)
-bks = root.xpath('//book')
-title = bks[0].xpath('.//title')
-print(title[0].text)
-
+l = ["a", "b", "c"]
+r.rpush("mylist2", *l)
