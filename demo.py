@@ -1,6 +1,9 @@
-import redis
+import re
+str = '远雄建设事业股份有限公司（FARGLORY LAND\r\r\n  DEVELOPMENT CO.,LTD.'
+str = '远雄建设事业股份有限公司（abc'
 
-r = redis.StrictRedis(host="192.168.86.86", port=6379, db=0)
+print(re.sub(r'\r|\n', '', str))
+print(str)
 
-l = ["a", "b", "c"]
-r.rpush("mylist2", *l)
+
+

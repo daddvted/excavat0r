@@ -50,13 +50,13 @@ class LandAuctionSpider(Larva):
         self.conn.commit()
 
     def prepare2crawl(self):
-        for p in range(3, 13):
+        for p in range(10, 13):
             print("----------- Crawling page {} -----------".format(p))
 
             data = {
                 '__VIEWSTATE': '/wEPDwULLTExNzkxNTY4MjEPZBYCAgMPZBYEAgEPFgIeC18hSXRlbUNvdW50Ag8WHmYPZBYCZg8VAwoyMDE2LzA4LzE5BjMwNjU1NTHmi43ljZbkvJrmiJDkuqTnu5PmnpzkuIDop4jooagoMjAxNuW5tDA45pyIMTnml6UpZAIBD2QWAmYPFQMKMjAxNi8wOC8wOQYyOTEyODAx5ouN5Y2W5Lya5oiQ5Lqk57uT5p6c5LiA6KeI6KGoKDIwMTblubQwOOaciDA55pelKWQCAg9kFgJmDxUDCjIwMTYvMDgvMDQGMjkwNDQ5MeaLjeWNluS8muaIkOS6pOe7k+aenOS4gOiniOihqCgyMDE25bm0MDjmnIgwNOaXpSlkAgMPZBYCZg8VAwoyMDE2LzA3LzI3BjI4MjkyMDHmi43ljZbkvJrmiJDkuqTnu5PmnpzkuIDop4jooagoMjAxNuW5tDA35pyIMjfml6UpZAIED2QWAmYPFQMKMjAxNi8wNy8yMQYyNzY3OTAx5ouN5Y2W5Lya5oiQ5Lqk57uT5p6c5LiA6KeI6KGoKDIwMTblubQwN+aciDIx5pelKWQCBQ9kFgJmDxUDCjIwMTYvMDcvMTMGMjcwMjMwMeaLjeWNluS8muaIkOS6pOe7k+aenOS4gOiniOihqCgyMDE25bm0MDfmnIgxM+aXpSlkAgYPZBYCZg8VAwoyMDE2LzA3LzA2BjI2NjY1MzHmi43ljZbkvJrmiJDkuqTnu5PmnpzkuIDop4jooagoMjAxNuW5tDA35pyIMDbml6UpZAIHD2QWAmYPFQMKMjAxNi8wNi8yOQYyNTkxMTMx5ouN5Y2W5Lya5oiQ5Lqk57uT5p6c5LiA6KeI6KGoKDIwMTblubQwNuaciDI55pelKWQCCA9kFgJmDxUDCjIwMTYvMDYvMjEGMjUyNzEzMeaLjeWNluS8muaIkOS6pOe7k+aenOS4gOiniOihqCgyMDE25bm0MDbmnIgyMeaXpSlkAgkPZBYCZg8VAwoyMDE2LzA2LzE2BjI0ODE5OTHmi43ljZbkvJrmiJDkuqTnu5PmnpzkuIDop4jooagoMjAxNuW5tDA25pyIMTbml6UpZAIKD2QWAmYPFQMKMjAxNi8wNi8xNAYyNDM1MjEx5ouN5Y2W5Lya5oiQ5Lqk57uT5p6c5LiA6KeI6KGoKDIwMTblubQwNuaciDE05pelKWQCCw9kFgJmDxUDCjIwMTYvMDYvMDEGMjM2MTQxMeaLjeWNluS8muaIkOS6pOe7k+aenOS4gOiniOihqCgyMDE25bm0MDbmnIgwMeaXpSlkAgwPZBYCZg8VAwoyMDE2LzA1LzMxBjIzNTM0NTHmi43ljZbkvJrmiJDkuqTnu5PmnpzkuIDop4jooagoMjAxNuW5tDA15pyIMzHml6UpZAIND2QWAmYPFQMKMjAxNi8wNS8yNQYyMzM2MjUx5ouN5Y2W5Lya5oiQ5Lqk57uT5p6c5LiA6KeI6KGoKDIwMTblubQwNeaciDI15pelKWQCDg9kFgJmDxUDCjIwMTYvMDUvMTkGMjMwNTM1MeaLjeWNluS8muaIkOS6pOe7k+aenOS4gOiniOihqCgyMDE25bm0MDXmnIgxOeaXpSlkAgMPDxYEHgtSZWNvcmRjb3VudAKpAR4QQ3VycmVudFBhZ2VJbmRleAIBZGRknBpMzCh1lVAb0hQ+KYqaC3XY/ObAUBQzQyX+ubYfCdU=',
                 '__EVENTTARGET': 'Pager',
-                '__EVENTARGUMENT': 1,
+                '__EVENTARGUMENT': p,
             }
             self.headers["User-Agent"] = random.choice(self.USER_AGENTS)
             browser = requests.post(self.post_url, headers=self.headers, data=urlencode(data))
@@ -76,32 +76,46 @@ class LandAuctionSpider(Larva):
         browser = requests.get(url, headers=self.headers)
         if browser.status_code == 200:
             html = lxml.html.fromstring(browser.text)
+
+            title = html.xpath('//span[@id="lblBT"]')[0].text_content().strip()
+            m = re.search(r'(\d+)年(\d+)月(\d+)日', title)
+            year = m.group(1)
+            month = m.group(2)
+            day = m.group(3)
+
+            month = "0" + month if len(month) == 1 else month
+            day = "0" + day if len(day) == 1 else day
+
+            date = year + month + day
+
             src = html.xpath('//iframe[@id="wzzwInfo"]')[0].attrib["src"]
             url = self.base_url + src.replace('..', '')
-            print(url)
-            m = re.search(r'\d\d\d\d-\d\d-\d\d', url)
-            date = m.group(0)
 
-
+            print("{0}: {1}".format(date, url))
             browser = requests.get(url, headers=self.headers)
+            if browser.encoding != "utf-8":
+                browser.encoding = "gb2312"
+
             html = lxml.html.fromstring(browser.text)
-            trs = html.xpath('//table/tr')
-            for tr in trs:
-                tds = tr.xpath('.//td')
+            trs = html.xpath('//tr')
+            for n in range(1, len(trs)):
+                tds = trs[n].xpath('.//td')
                 if len(tds):
                     data = {
-                        "no": tds[1].text_content().strip(),
-                        "addr": tds[2].text_content().strip(),
-                        "area": tds[3].text_content().strip(),
-                        "price": tds[4].text_content().strip(),
-                        "winner": tds[5].text_content().strip(),
+                        "no": re.sub(r'\r|\n', '', tds[1].text_content().strip()),
+                        "addr": re.sub(r'\r|\n', '', tds[2].text_content().strip()),
+                        "area": re.sub(r'\r|\n', '', tds[3].text_content().strip()),
+                        "price": re.sub(r'\r|\n', '', tds[4].text_content().strip()),
+                        "winner": re.sub(r'\r|\n', '', tds[5].text_content().strip()),
                         "date": date,
                     }
+                    print(data)
                     self.save2db(data)
 
 if __name__ == "__main__":
     spider = LandAuctionSpider()
     spider.prepare2crawl()
+    # spider.crawl("http://www.cdggzy.com:8112/three/pmjg_xx.aspx?RID=301")
 
     spider.cursor.close()
     spider.conn.close()
