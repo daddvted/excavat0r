@@ -1,5 +1,5 @@
 """
-成都小升初查询
+成都初中查询
 URL: http://www.cdzsks.com/
 URL: http://www.cdzsks.com/partition/partitioninfo
 该程序将通过Postman获取的json数据,直接导入数据库
