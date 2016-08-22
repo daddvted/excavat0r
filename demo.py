@@ -1,9 +1,12 @@
 import re
-str = '远雄建设事业股份有限公司（FARGLORY LAND\r\r\n  DEVELOPMENT CO.,LTD.'
-str = '远雄建设事业股份有限公司（abc'
+import json
 
-print(re.sub(r'\r|\n', '', str))
-print(str)
+with open("junior_high_school.txt", 'r') as f:
+    tmp = json.load(f)
 
 
+l = json.loads(tmp["data"])
+print(len(l))
+for item in l:
+    print(item)
 
