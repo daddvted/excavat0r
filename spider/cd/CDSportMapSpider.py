@@ -2,14 +2,15 @@
 成都体育实景地图
 URL: http://ty.cd168.cn/
 """
-import re
 import json
 import random
-import requests
-import lxml.html
-import mysql.connector
+import re
 from urllib.parse import urlencode
-from spider.LarvaSpider import Larva
+
+import mysql.connector
+import requests
+
+from spider.cd.LarvaSpider import Larva
 
 
 class CDSportMapSpider(Larva):

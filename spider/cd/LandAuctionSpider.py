@@ -2,14 +2,15 @@
 土地拍卖结果公示
 URL: http://www.cdggzy.com:8112/two/pmjg.html
 """
-import re
-import json
 import random
-import requests
+import re
+from urllib.parse import urlencode
+
 import lxml.html
 import mysql.connector
-from urllib.parse import urlencode
-from spider.LarvaSpider import Larva
+import requests
+
+from spider.cd.LarvaSpider import Larva
 
 
 class LandAuctionSpider(Larva):
