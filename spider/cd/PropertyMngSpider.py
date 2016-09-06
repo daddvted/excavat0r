@@ -11,7 +11,7 @@ import lxml.html
 import mysql.connector
 import requests
 
-from spider.cd.LarvaSpider import Larva
+from spider.Larva import Larva
 
 
 class PropertyMngSpider(Larva):

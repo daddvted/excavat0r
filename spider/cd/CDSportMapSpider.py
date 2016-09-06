@@ -10,7 +10,7 @@ from urllib.parse import urlencode
 import mysql.connector
 import requests
 
-from spider.cd.LarvaSpider import Larva
+from spider.Larva import Larva
 
 
 class CDSportMapSpider(Larva):
