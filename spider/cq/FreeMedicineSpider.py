@@ -47,6 +47,8 @@ class FreeMedicineSpider(Larva):
                 "User-Agent": random.choice(self.USER_AGENTS)
             }
 
+
+
             req = urllib.request.Request(url.format(p), headers=header, method="GET")
             resp = urllib.request.urlopen(req)
 
