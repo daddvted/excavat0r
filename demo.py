@@ -1,12 +1,24 @@
-import re
-import json
+from tornado.httpclient import HTTPClient, HTTPRequest
+from urllib.parse import urlencode
 
-with open("junior_high_school.txt", 'r') as f:
-    tmp = json.load(f)
+# url = "http://www.zaichengdu.com/api/nightwork"
+url = "http://ggfw.cqhrss.gov.cn/ggfw/QueryBLH_querySmXz.do"
+# url = "http://www.zaichengdu.com/api/aq"
 
+data = {
+    "code": "033",
+    "ajbjg": "5002240300",
+    "bfwjgmc": "",
+    "afwjglx": "医院",
+    "ayydj": "",
+}
 
-l = json.loads(tmp["data"])
-print(len(l))
-for item in l:
-    print(item)
+header = {
+    "Content-Type": "application/x-www-form-urlencoded",
+}
 
+req = HTTPRequest(url, method="POST", headers=header, body=urlencode(data))
+resp = HTTPClient().fetch(req)
+
+print(resp.code)
+print(resp.body.decode('utf-8'))
