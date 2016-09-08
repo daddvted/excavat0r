@@ -1,24 +1,7 @@
-from tornado.httpclient import HTTPClient, HTTPRequest
-from urllib.parse import urlencode
+import re
+s1 = "执业证号:15001201110576310"
+s2 = "地址：重庆市北碚区解放路139号1楼"
 
-# url = "http://www.zaichengdu.com/api/nightwork"
-url = "http://ggfw.cqhrss.gov.cn/ggfw/QueryBLH_querySmXz.do"
-# url = "http://www.zaichengdu.com/api/aq"
+print(re.split(r'[:|：]', s2)[1])
 
-data = {
-    "code": "033",
-    "ajbjg": "5002240300",
-    "bfwjgmc": "",
-    "afwjglx": "医院",
-    "ayydj": "",
-}
 
-header = {
-    "Content-Type": "application/x-www-form-urlencoded",
-}
-
-req = HTTPRequest(url, method="POST", headers=header, body=urlencode(data))
-resp = HTTPClient().fetch(req)
-
-print(resp.code)
-print(resp.body.decode('utf-8'))
