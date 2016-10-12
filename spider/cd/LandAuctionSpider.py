@@ -2,18 +2,15 @@
 土地拍卖结果公示
 URL: http://www.cdggzy.com:8112/two/pmjg.html
 """
-import random
 import re
-from urllib.parse import urlencode
-
+import requests
 import lxml.html
 import mysql.connector
-import requests
+from urllib.parse import urlencode
+from spider.Utils import fake_useragent
 
-from spider.Larva import Larva
 
-
-class LandAuctionSpider(Larva):
+class LandAuctionSpider(object):
     config = {
         'user': 'root',
         'password': 'hello',
@@ -59,7 +56,7 @@ class LandAuctionSpider(Larva):
                 '__EVENTTARGET': 'Pager',
                 '__EVENTARGUMENT': p,
             }
-            self.headers["User-Agent"] = random.choice(self.USER_AGENTS)
+            self.headers["User-Agent"] = fake_useragent()
             browser = requests.post(self.post_url, headers=self.headers, data=urlencode(data))
             if browser.status_code == 200:
                 html = lxml.html.fromstring(browser.text)
@@ -73,7 +70,7 @@ class LandAuctionSpider(Larva):
                 print("Error crawling page {}".format(p))
 
     def crawl(self, url):
-        self.headers["User-Agent"] = random.choice(self.USER_AGENTS)
+        self.headers["User-Agent"] = fake_useragent()
         browser = requests.get(url, headers=self.headers)
         if browser.status_code == 200:
             html = lxml.html.fromstring(browser.text)

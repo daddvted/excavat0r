@@ -3,17 +3,14 @@
 URL: http://ty.cd168.cn/
 """
 import json
-import random
 import re
-from urllib.parse import urlencode
-
 import mysql.connector
 import requests
+from urllib.parse import urlencode
+from spider.Utils import fake_useragent
 
-from spider.Larva import Larva
 
-
-class CDSportMapSpider(Larva):
+class CDSportMapSpider(object):
     config = {
         'user': 'root',
         'password': 'hello',
@@ -81,7 +78,7 @@ class CDSportMapSpider(Larva):
         data = {
             "categoryid": 8
         }
-        self.headers["User-Agent"] = random.choice(self.USER_AGENTS)
+        self.headers["User-Agent"] = fake_useragent()
         browser = requests.post(url, headers=self.headers, data=urlencode(data))
         if browser.status_code == 200:
             tmp = json.loads(browser.text)
@@ -116,7 +113,7 @@ class CDSportMapSpider(Larva):
                 "classid": int(k),
                 # "classid": 0,
             }
-            self.headers["User-Agent"] = random.choice(self.USER_AGENTS)
+            self.headers["User-Agent"] = fake_useragent()
             browser = requests.post(url, headers=self.headers, data=urlencode(data))
             if browser.status_code == 200:
                 result = json.loads(browser.text)
@@ -150,4 +147,3 @@ if __name__ == "__main__":
 
     spider.cursor.close()
     spider.conn.close()
-

@@ -4,17 +4,15 @@ URL: http://www.cdslsxh.org/lawyer/1.html
 爬取日期: 2016-7-6
 爬取页面: 1.html - 9499.html
 """
-import random
 import time
-
+import random
 import lxml.html
-import mysql.connector
 import requests
+import mysql.connector
+from spider.Utils import fake_useragent
 
-from spider.Larva import Larva
 
-
-class LawyerSpider(Larva):
+class LawyerSpider(object):
     config = {
         'user': 'root',
         'password': 'hello',
@@ -41,7 +39,7 @@ class LawyerSpider(Larva):
             print("====== Processing page {0} ======".format(m))
 
             headers = {
-                "User-Agent": random.choice(self.USER_AGENTS)
+                "User-Agent": fake_useragent()
             }
             browser = requests.get(self.url.format(m), headers=headers)
 

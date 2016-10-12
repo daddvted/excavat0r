@@ -3,15 +3,13 @@
 URL: http://www.cqwsjsw.gov.cn/Html/1/jbyf/index.html
 """
 import re
-import random
 import urllib.request
 import lxml.html
 import mysql.connector
+from spider.Utils import fake_useragent
 
-from spider.Larva import Larva
 
-
-class VaccinationSpider(Larva):
+class VaccinationSpider(object):
     config = {
         'user': 'root',
         'password': 'hello',
@@ -28,7 +26,7 @@ class VaccinationSpider(Larva):
         self.cursor = self.conn.cursor()
 
         self.header = {
-            "User-Agent": random.choice(self.USER_AGENTS)
+            "User-Agent": fake_useragent()
         }
 
         self.domain = "http://www.cqwsjsw.gov.cn{}"

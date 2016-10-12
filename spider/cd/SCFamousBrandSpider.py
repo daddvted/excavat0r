@@ -4,17 +4,14 @@ URL: http://www.zjj.chengdu.gov.cn/cdzj/xxcx/mpcpcx/list/
 爬取日期: 2016-7-19
 """
 import json
-import random
-from urllib.parse import urlencode
-
+import requests
 import lxml.html
 import mysql.connector
-import requests
+from urllib.parse import urlencode
+from spider.Utils import fake_useragent
 
-from spider.Larva import Larva
 
-
-class SCFamousBrandSpider(Larva):
+class SCFamousBrandSpider(object):
     config = {
         'user': 'root',
         'password': 'hello',
@@ -40,7 +37,7 @@ class SCFamousBrandSpider(Larva):
         print("====== Processing page 1 ======")
 
         headers = {
-            "User-Agent": random.choice(self.USER_AGENTS),
+            "User-Agent": fake_useragent(),
             "Content-Type": "application/x-www-form-urlencoded",
         }
         data = {

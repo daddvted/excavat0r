@@ -5,15 +5,13 @@ URL: http://www.cdmzj.gov.cn/cdmz/mzhy/mzhy_rjzl/index.html
 """
 import random
 import time
-
 import lxml.html
 import mysql.connector
 import requests
+from spider.Utils import fake_useragent
 
-from spider.Larva import Larva
 
-
-class DaytimeCareCenterSpider(Larva):
+class DaytimeCareCenterSpider(object):
     config = {
         'user': 'root',
         'password': 'hello',
@@ -40,7 +38,7 @@ class DaytimeCareCenterSpider(Larva):
             print("====== Processing page {0} ======".format(p))
 
             headers = {
-                "User-Agent": random.choice(self.USER_AGENTS)
+                "User-Agent": fake_useragent()
             }
             browser = requests.get(self.url.format(p), headers=headers)
 

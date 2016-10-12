@@ -2,16 +2,15 @@
 区县教委信息查询
 URL: http://www.cqedu.cn/Category_152/Index.aspx
 """
-import re
 import random
 import urllib.request
 import lxml.html
 import mysql.connector
 
-from spider.Larva import Larva
+from spider.Utils import fake_useragent
 
 
-class EducationCommitteeSpider(Larva):
+class EducationCommitteeSpider(object):
     config = {
         'user': 'root',
         'password': 'hello',
@@ -28,7 +27,7 @@ class EducationCommitteeSpider(Larva):
         self.cursor = self.conn.cursor()
 
         self.header = {
-            "User-Agent": random.choice(self.USER_AGENTS)
+            "User-Agent": fake_useragent()
         }
 
     def save2db(self, data):

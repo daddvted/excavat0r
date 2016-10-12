@@ -2,19 +2,17 @@
 物理管理执业名册
 URL: http://zy.cdpma.cn/C_staffSearch/EnterPriseInfo.aspx
 """
-import random
 import sys
 import time
-from urllib.parse import urlencode
-
+import random
+import requests
 import lxml.html
 import mysql.connector
-import requests
+from urllib.parse import urlencode
+from spider.Utils import fake_useragent
 
-from spider.Larva import Larva
 
-
-class PropertyMngSpider(Larva):
+class PropertyMngSpider(object):
     config = {
         'user': 'root',
         'password': 'hello',
@@ -50,7 +48,7 @@ class PropertyMngSpider(Larva):
     def crawl(self):
         print("crawling page 1")
         headers = {
-            "User-Agent": random.choice(self.USER_AGENTS)
+            "User-Agent": fake_useragent()
         }
         browser = requests.get(self.URL, headers=headers)
         if browser.status_code == 200:
@@ -78,7 +76,7 @@ class PropertyMngSpider(Larva):
             print("crawling page {}".format(p))
             headers = {
                 "Content-Type": "application/x-www-form-urlencoded",
-                "User-Agent": random.choice(self.USER_AGENTS),
+                "User-Agent": fake_useragent()
             }
             browser = requests.post(self.URL, headers=headers, data=urlencode(data))
             if browser.status_code == 200:

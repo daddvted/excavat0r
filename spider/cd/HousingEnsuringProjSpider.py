@@ -2,8 +2,6 @@
 住房保障项目查询
 URL: http://www.cdfgj.gov.cn/IHProject/ShowIHProjectList.aspx
 """
-import time
-import random
 import requests
 import lxml.html
 import mysql.connector
