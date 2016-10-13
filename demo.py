@@ -1,7 +1,4 @@
-import re
-s1 = "执业证号:15001201110576310"
-s2 = "地址：重庆市北碚区解放路139号1楼"
 
-print(re.split(r'[:|：]', s2)[1])
-
-
+for n in range(50):
+    tpl = "Page{:>6}: [done]".format(n)
+    print(tpl)
