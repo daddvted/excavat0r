@@ -1,3 +1,11 @@
+"""
+学校列表包括学校基本信息，官方微博，招办微博 (来源新浪)
+URL: http://kaoshi.edu.sina.com.cn/college/collegelist/view?provid=&typeid=&pro=&tab=&page=1
+
+学校网站，地址，联系电话等，学校分数线，专业分数线 (来源ipin.com)
+URL: http://www.ipin.com/school/schoolFilter.do
+
+"""
 import re
 import requests
 import lxml.html
@@ -5,47 +13,51 @@ from bson.objectid import ObjectId
 from pymongo import MongoClient
 from spider.Utils import fake_useragent
 
+PROVINCE = {
+    "1": "北京",
+    "2": "天津",
+    "3": "上海",
+    "4": "重庆",
+    "5": "河北",
+    "6": "河南",
+    "7": "山东",
+    "8": "山西",
+    "9": "安徽",
+    "10": "江西",
+    "11": "江苏",
+    "12": "浙江",
+    "13": "湖北",
+    "14": "湖南",
+    "15": "广东",
+    "16": "广西",
+    "17": "云南",
+    "18": "贵州",
+    "19": "四川",
+    "20": "陕西",
+    "21": "青海",
+    "22": "宁夏",
+    "23": "黑龙江",
+    "24": "吉林",
+    "25": "辽宁",
+    "26": "西藏",
+    "27": "新疆",
+    "28": "内蒙古",
+    "29": "海南",
+    "30": "福建",
+    "31": "甘肃",
+    "32": "港澳台",
+}
 
-class UniversitySpider(object):
-    PROVINCE = {
-        "1": "北京",
-        "2": "天津",
-        "3": "上海",
-        "4": "重庆",
-        "5": "河北",
-        "6": "河南",
-        "7": "山东",
-        "8": "山西",
-        "9": "安徽",
-        "10": "江西",
-        "11": "江苏",
-        "12": "浙江",
-        "13": "湖北",
-        "14": "湖南",
-        "15": "广东",
-        "16": "广西",
-        "17": "云南",
-        "18": "贵州",
-        "19": "四川",
-        "20": "陕西",
-        "21": "青海",
-        "22": "宁夏",
-        "23": "黑龙江",
-        "24": "吉林",
-        "25": "辽宁",
-        "26": "西藏",
-        "27": "新疆",
-        "28": "内蒙古",
-        "29": "海南",
-        "30": "福建",
-        "31": "甘肃",
-        "32": "港澳台",
-    }
 
+class UniversitySpiderSina(object):
     def __init__(self):
         self.tracker = open("univ.txt", 'w')
         self.url_template = "http://kaoshi.edu.sina.com.cn/college/collegelist/view?provid=&typeid=&pro=&tab=&page={}"
-        pass
+
+        conn = MongoClient("192.168.86.86:27017")
+        conn.service.authenticate('serviceadmin', 'hello', mechanism='SCRAM-SHA-1')
+        db = conn["service"]
+        self.collection = db.university
 
     def crawl(self, start, end):
         for p in range(start, end + 1):
@@ -89,9 +101,15 @@ class UniversitySpider(object):
                     location = ps[0].text_content().strip().split(':')[1].strip()
                     utype = ps[2].text_content().strip().split(':')[1].strip()
                     subject_to = ps[4].text_content().strip().split(':')[1].strip()
-                    key_discipline = re.findall(r'(\d+)', ps[1].text_content().strip())[0]
-                    master = re.findall(r'(\d+)', ps[3].text_content().strip())[0]
-                    doctor = re.findall(r'(\d+)', ps[5].text_content().strip())[0]
+
+                    tmp = re.findall(r'(\d+)', ps[1].text_content().strip())
+                    key_discipline = "-" if len(tmp) == 0 else tmp[0]
+
+                    tmp = re.findall(r'(\d+)', ps[3].text_content().strip())
+                    master = "-" if len(tmp) == 0 else tmp[0]
+
+                    tmp = re.findall(r'(\d+)', ps[5].text_content().strip())
+                    doctor = "-" if len(tmp) == 0 else tmp[0]
 
                     # Extract tags
                     tags = []
@@ -113,7 +131,7 @@ class UniversitySpider(object):
                         "tags": tags,  # 标签
                         "url": url,  # 第二次抓取用url
                     }
-                    print(doc)
+                    self.collection.insert_one(doc)
 
                 print("Page{:>6}: [done]".format(p))
                 print("Page{:>6}: [done]".format(p), file=self.tracker)
@@ -121,18 +139,34 @@ class UniversitySpider(object):
                 print("Page{:>6}: [fail]".format(p))
                 print("Page{:>6}: [fail]".format(p), file=self.tracker)
 
+        self.tracker.cloes()
 
-class UniversityScoreSpider(object):
-    pass
+
+class UniversitySpiderIpin(object):
+    def __init__(self):
+        self.url = "http://www.ipin.com/school/filter/schoolList.do?searchKey=&score=false&level=%E6%9C%AC%E7%A7%91&&page=1"
+        # score: true 返回的url为分数页面, false为学校详情页面
+        # level: 本科/专科, url编码
+        # page: 页数，目前为57页
+
+    def crawl_info(self):
+
+        # browser = requests.get(self.url)
+        f = open("demo.txt", 'r')
+
+        text = f.read()
+        pattern = re.compile(r'<div.*</div>', re.DOTALL | re.MULTILINE)
+        m = pattern.search(text)
+        if m:
+            print(m.group())
+
+    def crawl_score(self):
+        pass
 
 
 if __name__ == "__main__":
-    univ = UniversitySpider()
-    univ.crawl(1, 2)
-    # conn = MongoClient("192.168.86.86:27017")
-    # conn.service.authenticate('serviceadmin', 'hello', mechanism='SCRAM-SHA-1')
-    # db = conn["service"]
-    # university = db.university
-    # university.update_one({"name": "北京大学"}, {"$set": {"name": "北京小学"}})
-    # for doc in university.find({}):
-    #     print(doc)
+    # univ = UniversitySpiderSina()
+    # univ.crawl(1, 241)
+
+    univ = UniversitySpiderIpin()
+    univ.crawl_info()
