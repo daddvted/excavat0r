@@ -7,8 +7,12 @@ URL: http://www.ipin.com/school/schoolFilter.do
 
 """
 import re
+import time
+import queue
+import threading
 import requests
 import lxml.html
+from queue import Empty
 from bson.objectid import ObjectId
 from pymongo import MongoClient
 from spider.Utils import fake_useragent
@@ -47,9 +51,16 @@ PROVINCE = {
     "31": "甘肃",
     "32": "港澳台",
 }
+SCORE_SPIDER_NUM = 3
+URL_Q = queue.Queue
 
 
-class UniversitySpiderSina(object):
+def update_university_info(name, **kwargs):
+    print("Mongodb: {}".format(name))
+    print(kwargs)
+
+
+class SinaUniversitySpider(object):
     def __init__(self):
         self.tracker = open("univ.txt", 'w')
         self.url_template = "http://kaoshi.edu.sina.com.cn/college/collegelist/view?provid=&typeid=&pro=&tab=&page={}"
@@ -103,6 +114,7 @@ class UniversitySpiderSina(object):
                     subject_to = ps[4].text_content().strip().split(':')[1].strip()
 
                     tmp = re.findall(r'(\d+)', ps[1].text_content().strip())
+
                     key_discipline = "-" if len(tmp) == 0 else tmp[0]
 
                     tmp = re.findall(r'(\d+)', ps[3].text_content().strip())
@@ -139,34 +151,83 @@ class UniversitySpiderSina(object):
                 print("Page{:>6}: [fail]".format(p))
                 print("Page{:>6}: [fail]".format(p), file=self.tracker)
 
-        self.tracker.cloes()
+        # Close file handler
+        self.tracker.close()
 
 
-class UniversitySpiderIpin(object):
-    def __init__(self):
-        self.url = "http://www.ipin.com/school/filter/schoolList.do?searchKey=&score=false&level=%E6%9C%AC%E7%A7%91&&page=1"
+class IpinURLSpider(threading.Thread):
+    def __init__(self, first_page, last_page):
+        super().__init__()
+
         # score: true 返回的url为分数页面, false为学校详情页面
         # level: 本科/专科, url编码
         # page: 页数，目前为57页
+        self.url = "http://www.ipin.com/school/filter/schoolList.do?searchKey=&score=false&level=%E6%9C%AC%E7%A7%91&&page=1"
 
-    def crawl_info(self):
+        self.first = first_page
+        self.last = last_page
+        self.ipin_url = open("ipin_url.txt", 'w')
 
-        # browser = requests.get(self.url)
-        f = open("demo.txt", 'r')
+    def run(self):
+        global URL_Q
 
-        text = f.read()
-        pattern = re.compile(r'<div.*</div>', re.DOTALL | re.MULTILINE)
-        m = pattern.search(text)
-        if m:
-            print(m.group())
+        for p in range(self.first, self.last + 1):
+            # browser = requests.get(self.url)
+            f = open("demo.txt", 'r')
+            text = f.read()
+            pattern = re.compile(r'<div.*</div>', re.DOTALL | re.MULTILINE)
+            m = pattern.search(text)
+            if m:
+                html = m.group()
+            html = html.replace('\\"', '"').replace('\\n', '')
 
-    def crawl_score(self):
-        pass
+            html = lxml.html.fromstring(html)
+            divs = html.xpath('//div[@class="tabDiv"]')
+            trs = divs[0].xpath('.//tr')
+            for n in range(1, len(trs)):
+                tds = trs[n].xpath('.//td')
+                url = tds[0].xpath('./a')[0].attrib["href"]
+                print(type(url))
+                name = tds[0].text_content().strip()
+                degree_provided = tds[3].text_content().strip()
+                rank = tds[4].text_content().strip()
+                data = {
+                    "degree_provided": degree_provided,
+                    "rank": rank
+                }
+                update_university_info(name, **data)
+                print(url)
+                URL_Q.put(url)
 
+        print("[ IpinURLSpider ] done")
+
+
+class IpinScoreSpider(threading.Thread):
+    def run(self):
+        global URL_Q
+
+        while True:
+            try:
+                url = URL_Q.get(block=False)
+            except Empty:
+                time.sleep(5)
+                if URL_Q.empty():
+                    print("{} [exit]".format(self.name))
+                    break
+                else:
+                    continue
+
+            print("{} is crawling: {}".format(self.name, url))
+            time.sleep(1)
+            URL_Q.task_done()
 
 if __name__ == "__main__":
-    # univ = UniversitySpiderSina()
+    # univ = SinaUniversitySpider()
     # univ.crawl(1, 241)
 
-    univ = UniversitySpiderIpin()
-    univ.crawl_info()
+    url_spider = IpinURLSpider(1, 1)
+    url_spider.start()
+
+    for _ in range(SCORE_SPIDER_NUM):
+        print("hello")
+
