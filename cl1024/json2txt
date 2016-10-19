@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+import sys
+import json
+import re
+import codecs
+
+if len(sys.argv) != 2:
+    exit(-1)
+
+filename = sys.argv[1]
+
+output = codecs.open(filename+".txt",'w','utf-8')
+
+with open(filename,'r') as f:
+    current_title = ""
+    for line in f.readlines():
+        line = line.strip("\n")
+        item = json.loads(line)
+        if item['title'] != current_title:
+            output.write(item['title']+"\n")
+            current_title = item['title']
+
+        tmp = item['link']+"\n"
+        output.write(tmp)
+output.close()
