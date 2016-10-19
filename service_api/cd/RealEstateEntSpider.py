@@ -9,7 +9,7 @@ import random
 import requests
 import lxml.html
 import mysql.connector
-from spider.Utils import fake_useragent
+from service_api.Utils import fake_useragent
 
 
 class ReligionSpider(object):

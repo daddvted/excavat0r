@@ -11,7 +11,7 @@ import requests
 import lxml.html
 import mysql.connector
 from bs4 import BeautifulSoup
-from spider.Utils import fake_useragent
+from service_api.Utils import fake_useragent
 
 
 class TravelAgencySpider(object):

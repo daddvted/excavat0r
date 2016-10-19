@@ -16,7 +16,7 @@ import lxml.html
 from queue import Empty
 from bson.objectid import ObjectId
 from pymongo import MongoClient
-from spider.Utils import fake_useragent
+from service_api.Utils import fake_useragent
 
 PROVINCE = {
     "1": "北京",

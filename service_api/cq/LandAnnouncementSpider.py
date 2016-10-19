@@ -5,7 +5,7 @@ URL: http://jyzx.cqgtfw.gov.cn/ngytd/ngytd.asp
 import urllib.request
 import lxml.html
 import mysql.connector
-from spider.Utils import fake_useragent
+from service_api.Utils import fake_useragent
 
 
 class LandAnnouncementSpider(object):

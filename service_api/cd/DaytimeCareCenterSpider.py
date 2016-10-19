@@ -8,7 +8,7 @@ import time
 import lxml.html
 import mysql.connector
 import requests
-from spider.Utils import fake_useragent
+from service_api.Utils import fake_useragent
 
 
 class DaytimeCareCenterSpider(object):

@@ -9,7 +9,7 @@ import random
 import lxml.html
 import requests
 import mysql.connector
-from spider.Utils import fake_useragent
+from service_api.Utils import fake_useragent
 
 
 class LawyerSpider(object):

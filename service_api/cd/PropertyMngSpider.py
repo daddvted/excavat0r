@@ -9,7 +9,7 @@ import requests
 import lxml.html
 import mysql.connector
 from urllib.parse import urlencode
-from spider.Utils import fake_useragent
+from service_api.Utils import fake_useragent
 
 
 class PropertyMngSpider(object):

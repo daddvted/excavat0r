@@ -7,7 +7,7 @@ import re
 import mysql.connector
 import requests
 from urllib.parse import urlencode
-from spider.Utils import fake_useragent
+from service_api.Utils import fake_useragent
 
 
 class CDSportMapSpider(object):
