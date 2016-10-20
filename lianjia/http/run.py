@@ -1,31 +1,34 @@
 import os
 import sys
-import logging.config
-from configparser import ConfigParser
 
 import tornado.web
 import tornado.httpserver
 import tornado.ioloop
 
-class IndexHandler(tornado.web.RequestHandler):
+
+class Index(tornado.web.RequestHandler):
     def get(self):
         self.render("heatmap.html")
 
+
+class Addr2coord(tornado.web.RequestHandler):
+    def get(self):
+        self.render("addr2coord.html")
+
+
 class Simple(tornado.web.Application):
+    BASE_PATH = os.path.dirname(__file__)
+
     def __init__(self):
-        base_path = os.path.dirname(__file__)
 
         handlers = [
-            # (r"/api_cq/debug", DebugHandler),
-
-            # Service API with crawled data
-            (r"/", IndexHandler),
-
+            (r"/", Index),
+            (r"/addr2coord", Addr2coord),
         ]
 
         settings = dict(
-            template_path=base_path,
-            static_path=base_path,
+            template_path=os.path.join(self.BASE_PATH, "template"),
+            static_path=os.path.join(self.BASE_PATH, "static"),
             # upload_path=os.path.join(os.path.dirname(__file__), "upload"),
             # config_path=os.path.join(os.path.dirname(__file__), "conf"),
             xsrf_cookies=False,

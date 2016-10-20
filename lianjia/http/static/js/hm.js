@@ -1,7 +1,8 @@
 var map = new BMap.Map("container");          // 创建地图实例
 
-var point = new BMap.Point(116.418261, 39.921984);
+var point = new BMap.Point(104.071478,30.663951);
 map.centerAndZoom(point, 15);             // 初始化地图，设置中心点坐标和地图级别
+//map.centerAndZoom("成都", 15);
 map.enableScrollWheelZoom(); // 允许滚轮缩放
 
 
@@ -9,10 +10,10 @@ heatmapOverlay = new BMapLib.HeatmapOverlay({"radius":20});
 map.addOverlay(heatmapOverlay);
 
 var points = [];
-$.getJSON("static/points.json", function(data){
+$.getJSON("static/house_points.json", function(data){
     points = data;
     alert(points.length);
-    heatmapOverlay.setDataSet({data:points,max:100});
+    heatmapOverlay.setDataSet({data:points,max:200});
 });
 
 

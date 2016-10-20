@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>addr2coord</title>
+
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=Wpi6NmGmbAxrQDl6NAOVdufUMPMHyofA"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/library/Heatmap/2.0/src/Heatmap_min.js"></script>
+</head>
+<body>
+<div id="coord"></div>
+</body>
+</html>
+<script type="text/javascript">
+	var myGeo = new BMap.Geocoder();
+	var addrs = [
+	    "美洲花园棕榈湾",
+		"中国铁建北湖国际城"
+	];
+
+    for(var i=0; i<addrs.length;i++) {
+        a = addrs[i];
+
+        (function(num, name){
+
+            myGeo.getPoint(name, function(point){
+			    if (point) {
+			        document.getElementById("coord").innerHTML +=  num + "、" + name + ":" + point.lng + "," + point.lat + "</br>";
+			    }
+		    }, "成都市");
+
+        })(i, a);
+	}
+</script>
