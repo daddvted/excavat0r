@@ -8,12 +8,17 @@ import tornado.ioloop
 
 class Index(tornado.web.RequestHandler):
     def get(self):
-        self.render("heatmap.html")
+        self.render("heatmap_amap.html")
 
 
-class Addr2coord(tornado.web.RequestHandler):
+class Addr2coordBaidu(tornado.web.RequestHandler):
     def get(self):
-        self.render("addr2coord.html")
+        self.render("addr2coord_baidu.html")
+
+
+class Addr2coordAmap(tornado.web.RequestHandler):
+    def get(self):
+        self.render("addr2coord_amap.html")
 
 
 class Simple(tornado.web.Application):
@@ -23,7 +28,8 @@ class Simple(tornado.web.Application):
 
         handlers = [
             (r"/", Index),
-            (r"/addr2coord", Addr2coord),
+            (r"/addr2coordbaidu", Addr2coordBaidu),
+            (r"/addr2coordamap", Addr2coordAmap),
         ]
 
         settings = dict(
