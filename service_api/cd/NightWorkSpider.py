@@ -42,7 +42,7 @@ class NightWorkSpider(object):
         'password': 'hello',
         'host': '192.168.86.86',
         'port': '3306',
-        'database': 'service',
+        'database': 'service_cd',
         'raise_on_warnings': True,
 
     }
@@ -65,7 +65,7 @@ class NightWorkSpider(object):
 
     def save2db(self, data):
 
-        template = "INSERT INTO night_work(unit, project, part, start, end, addr, crawl_date) " \
+        template = "INSERT INTO nightwork(unit, project, part, start, end, addr, crawl_date) " \
                    "VALUES (%(unit)s, %(project)s, %(part)s, %(start)s, %(end)s, %(addr)s, %(crawl_date)s)"
         self.cursor.execute(template, data)
         self.conn.commit()
