@@ -1,4 +1,4 @@
-### A Spider Project [code: Excavator]
+### A Spider Project [code: excavat0r]
 * Left blank currently
 * In developing
 
